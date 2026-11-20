@@ -13,321 +13,260 @@
 
 <style>
 :root {
-  --verde: #55c39d;
-  --verde-escuro: #238b68;
-  --texto: #353b3e;
-  --cinza: #85898b;
-  --borda: #dedede;
-  --fundo: #ffffff;
+  --verde:#55c39d;
+  --verde-escuro:#238b68;
+  --texto:#353b3e;
+  --borda:#dedede;
 }
-* { box-sizing: border-box; }
-
+* {box-sizing:border-box}
 body {
-  margin: 0;
-  background: #fff;
-  color: var(--texto);
-  font-family: 'Inter', sans-serif;
+  margin:0;
+  background:#fff;
+  color:var(--texto);
+  font-family:Inter,sans-serif;
 }
-
 .topo {
-  background: #fff;
-  padding: 25px 22px 22px;
-  border-bottom: 2px solid #e8e8e8;
+  background:#fff;
+  padding:25px 22px 22px;
+  border-bottom:2px solid #e8e8e8;
 }
-
-.topo-conteudo {
-  max-width: 1050px;
-  margin: auto;
-}
-
+.topo-conteudo {max-width:1050px;margin:auto}
 .marca {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 22px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:22px;
 }
-
 .logo {
-  width: 49px;
-  height: 49px;
-  color: #292929;
-  font-size: 35px;
-  font-weight: 800;
-  letter-spacing: -3px;
-  display: flex;
-  align-items: center;
+  display:flex;
+  align-items:center;
+  gap:7px;
 }
-
-.logo span {
-  color: #292929;
+.logo-texto {
+  font-size:35px;
+  font-weight:800;
+  letter-spacing:-3px;
+  color:#292929;
 }
-
+.logo-digital {
+  width:39px;
+  height:39px;
+  color:var(--verde-escuro);
+}
 .marca-nome {
-  font-size: 12px;
-  color: #777;
-  letter-spacing: 2px;
-  font-weight: 600;
-  margin-top: 4px;
+  font-size:12px;
+  color:#777;
+  letter-spacing:2px;
+  font-weight:600;
+  margin-top:4px;
 }
-
 .busca {
-  max-width: 760px;
-  margin: 0 auto;
-  display: flex;
-  gap: 12px;
+  max-width:760px;
+  margin:auto;
+  display:flex;
+  gap:12px;
 }
-
 .busca input {
-  flex: 1;
-  min-width: 0;
-  height: 62px;
-  padding: 0 24px;
-  border: 2px solid #ccc;
-  border-radius: 9px;
-  font-size: 16px;
-  font-family: inherit;
-  outline: none;
-  color: #333;
+  flex:1;
+  min-width:0;
+  height:62px;
+  padding:0 24px;
+  border:2px solid #ccc;
+  border-radius:9px;
+  font-size:16px;
+  font-family:inherit;
+  outline:none;
 }
-
-.busca input:focus {
-  border-color: var(--verde);
-}
-
-.busca input::placeholder {
-  color: #777;
-}
-
+.busca input:focus {border-color:var(--verde)}
 .busca button {
-  width: 72px;
-  height: 62px;
-  border: 0;
-  border-radius: 10px;
-  background: #ededed;
-  color: #353b3e;
-  font-size: 27px;
-  cursor: pointer;
+  width:72px;
+  height:62px;
+  border:0;
+  border-radius:10px;
+  background:#ededed;
+  color:#353b3e;
+  font-size:27px;
+  cursor:pointer;
 }
-
-.busca button:disabled {
-  opacity: .6;
-}
-
-main {
-  max-width: 1050px;
-  margin: auto;
-}
-
-.resultado {
-  display: none;
-}
-
+.busca button:disabled {opacity:.6}
+main {max-width:1050px;margin:auto}
+.resultado {display:none}
 .status-area {
-  text-align: center;
-  padding: 30px 20px 28px;
-  border-bottom: 2px solid #e8e8e8;
+  text-align:center;
+  padding:30px 20px 28px;
+  border-bottom:2px solid #e8e8e8;
 }
-
 .status-titulo {
-  color: var(--verde);
-  font-size: clamp(30px, 6vw, 58px);
-  font-weight: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin: 0;
+  color:var(--verde);
+  font-size:clamp(30px,6vw,58px);
+  font-weight:300;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  margin:0;
 }
-
 .check {
-  background: var(--verde);
-  color: white;
-  width: 37px;
-  height: 37px;
-  min-width: 37px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 700;
+  background:var(--verde);
+  color:white;
+  width:37px;
+  height:37px;
+  min-width:37px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:700;
 }
-
 .codigo {
-  font-size: 20px;
-  margin: 27px 0 30px;
-  overflow-wrap: anywhere;
+  font-size:20px;
+  margin:27px 0 30px;
+  overflow-wrap:anywhere;
 }
-
 .downloads {
-  max-width: 750px;
-  margin: auto;
-  display: grid;
-  gap: 18px;
+  max-width:750px;
+  margin:auto;
+  display:grid;
+  gap:18px;
 }
-
 .download {
-  min-height: 68px;
-  border: 2px solid #dedede;
-  border-radius: 9px;
-  background: white;
-  color: #42484b;
-  font-family: inherit;
-  font-size: 17px;
-  font-weight: 400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  cursor: not-allowed;
-  opacity: .85;
+  min-height:68px;
+  border:2px solid #dedede;
+  border-radius:9px;
+  background:white;
+  color:#42484b;
+  font-family:inherit;
+  font-size:17px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  cursor:pointer;
 }
-
-.download .icone {
-  font-size: 27px;
-}
-
+.download:disabled {cursor:not-allowed;opacity:.6}
+.download .icone {font-size:27px}
 .download small {
-  display: block;
-  font-size: 10px;
-  color: #999;
-  margin-top: 3px;
+  display:block;
+  font-size:10px;
+  color:#999;
+  margin-top:3px;
 }
-
-.informacoes {
-  padding: 32px 25px 45px;
-}
-
+.informacoes {padding:32px 25px 45px}
 .titulo-informacoes {
-  color: #777d7f;
-  font-size: 23px;
-  font-weight: 600;
-  margin: 5px 0 35px;
+  color:#777d7f;
+  font-size:23px;
+  font-weight:600;
+  margin:5px 0 35px;
 }
-
 .grupo {
-  border: 2px solid #d0d0d0;
-  border-radius: 7px;
-  padding: 35px 30px 25px;
-  margin: 0 0 34px;
-  position: relative;
+  border:2px solid #d0d0d0;
+  border-radius:7px;
+  padding:35px 30px 25px;
+  margin:0 0 34px;
+  position:relative;
 }
-
 .grupo-titulo {
-  position: absolute;
-  top: -15px;
-  left: 20px;
-  background: white;
-  padding: 0 15px;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  color: #41484a;
+  position:absolute;
+  top:-15px;
+  left:20px;
+  background:white;
+  padding:0 15px;
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  color:#41484a;
 }
-
 .grade {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 30px 35px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:30px 35px;
 }
-
-.campo {
-  min-width: 0;
-}
-
+.campo {min-width:0}
 .campo small {
-  display: block;
-  color: #929596;
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: .7px;
-  margin-bottom: 10px;
-  text-transform: uppercase;
+  display:block;
+  color:#929596;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:.7px;
+  margin-bottom:10px;
+  text-transform:uppercase;
 }
-
 .campo div {
-  font-size: 17px;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-  color: #303638;
-  font-weight: 400;
+  font-size:17px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+  color:#303638;
 }
-
 .mensagem {
-  text-align: center;
-  padding: 28px 18px;
-  font-size: 15px;
-  color: #777;
+  text-align:center;
+  padding:28px 18px;
+  font-size:15px;
+  color:#777;
 }
-
 .erro {
-  display: inline-block;
-  max-width: 650px;
-  background: #fff0f0;
-  color: #a13c3c;
-  border: 1px solid #edcccc;
-  border-radius: 8px;
-  padding: 15px 18px;
+  display:inline-block;
+  max-width:650px;
+  background:#fff0f0;
+  color:#a13c3c;
+  border:1px solid #edcccc;
+  border-radius:8px;
+  padding:15px 18px;
 }
-
 .rodape {
-  border-top: 1px solid #e8e8e8;
-  padding: 25px 15px;
-  text-align: center;
-  font-size: 11px;
-  color: #999;
+  border-top:1px solid #e8e8e8;
+  padding:25px 15px;
+  text-align:center;
+  font-size:11px;
+  color:#999;
 }
-
-.rodape strong {
-  color: #555;
-}
-
+.rodape strong {color:#555}
 @media(max-width:600px) {
-  .topo { padding: 25px 18px 20px; }
-  .marca { margin-bottom: 18px; }
-  .busca { gap: 9px; }
-  .busca input {
-    height: 60px;
-    padding: 0 18px;
-    font-size: 15px;
-  }
-  .busca button {
-    width: 65px;
-    height: 60px;
-  }
-  .status-area { padding: 30px 16px 27px; }
-  .status-titulo { gap: 10px; }
-  .check { width: 32px; height: 32px; min-width: 32px; font-size: 21px; }
-  .codigo { font-size: 17px; margin: 27px 0 29px; }
-  .download { min-height: 62px; font-size: 15px; }
-  .informacoes { padding: 30px 14px; }
-  .titulo-informacoes { font-size: 21px; margin-bottom: 38px; }
-  .grupo { padding: 38px 24px 28px; margin-bottom: 34px; }
-  .grupo-titulo { font-size: 14px; }
-  .grade { grid-template-columns: 1fr; gap: 29px; }
-  .campo small { font-size: 13px; }
-  .campo div { font-size: 17px; }
+  .topo {padding:25px 18px 20px}
+  .marca {margin-bottom:18px}
+  .busca {gap:9px}
+  .busca input {height:60px;padding:0 18px;font-size:15px}
+  .busca button {width:65px;height:60px}
+  .status-area {padding:30px 16px 27px}
+  .status-titulo {gap:10px}
+  .check {width:32px;height:32px;min-width:32px;font-size:21px}
+  .codigo {font-size:17px;margin:27px 0 29px}
+  .download {min-height:62px;font-size:15px}
+  .informacoes {padding:30px 14px}
+  .titulo-informacoes {font-size:21px;margin-bottom:38px}
+  .grupo {padding:38px 24px 28px;margin-bottom:34px}
+  .grupo-titulo {font-size:14px}
+  .grade {grid-template-columns:1fr;gap:29px}
+  .campo div {font-size:17px}
 }
 </style>
 </head>
 
 <body>
-
 <header class="topo">
   <div class="topo-conteudo">
     <div class="marca">
-      <div class="logo">B3</div>
+      <div class="logo">
+        <svg class="logo-digital" viewBox="0 0 48 48" fill="none"
+             xmlns="http://www.w3.org/2000/svg" aria-label="Digital tecnológica">
+          <path d="M24 5C13 5 5 13 5 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 11C16.5 11 11 16.5 11 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 17C20 17 17 20 17 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 5C35 5 43 13 43 24C43 31 40 37 36 42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 11C31.5 11 37 16.5 37 24C37 30 35 35 32 39" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 17C28 17 31 20 31 24C31 30 29 34 27 37" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 23C24 30 23 36 20 42" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M12 30L8 34M36 12L41 9M7 17L3 15M39 31L45 34" stroke="#55c39d" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-texto">B3</span>
+      </div>
       <div class="marca-nome">DIPLOMAS</div>
     </div>
 
     <form class="busca" id="formBusca">
-      <input
-        id="codigo"
-        type="text"
-        placeholder="Validação por código"
-        autocomplete="off"
-        required
-      >
+      <input id="codigo" type="text"
+             placeholder="Validação por código"
+             autocomplete="off" required>
       <button type="submit" id="btnBuscar" aria-label="Consultar código">⌕</button>
     </form>
   </div>
@@ -339,7 +278,6 @@ main {
   </div>
 
   <section class="resultado" id="resultado">
-
     <section class="status-area">
       <h1 class="status-titulo">
         <span class="check">✓</span>
@@ -351,19 +289,17 @@ main {
       </div>
 
       <div class="downloads">
-        <button class="download" type="button" disabled>
+        <button class="download" type="button" id="btnPdf">
           <span class="icone">⇩</span>
-          <span>
-            Baixar representação visual
-            <small>Disponibilidade em configuração</small>
+          <span>Baixar representação visual
+            <small>Documento PDF</small>
           </span>
         </button>
 
-        <button class="download" type="button" disabled>
+        <button class="download" type="button" id="btnXml">
           <span class="icone">⇩</span>
-          <span>
-            Baixar XML assinado
-            <small>Assinatura digital em configuração</small>
+          <span>Baixar arquivo XML
+            <small>Arquivo XML com os dados públicos</small>
           </span>
         </button>
       </div>
@@ -376,6 +312,8 @@ main {
         <div class="grupo-titulo">DIPLOMADO</div>
         <div class="grade">
           <div class="campo"><small>Nome</small><div id="r_nome"></div></div>
+          <div class="campo"><small>CPF</small><div id="r_cpf"></div></div>
+          <div class="campo"><small>Data de nascimento</small><div id="r_nascimento"></div></div>
           <div class="campo"><small>Nacionalidade</small><div id="r_nacionalidade"></div></div>
           <div class="campo"><small>Naturalidade</small><div id="r_naturalidade"></div></div>
           <div class="campo"><small>Data de ingresso</small><div id="r_ingresso"></div></div>
@@ -431,7 +369,6 @@ main {
           <div class="campo"><small>Endereço</small><div id="r_end_reg"></div></div>
         </div>
       </div>
-
     </section>
   </section>
 </main>
@@ -448,38 +385,42 @@ const SUPABASE_KEY = "sb_publishable_Vz8dWvlsFTVTUWPjJkjsMg_iizsxDJI";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const campos = {
-  codigo: "codigo",
-  nome: "nome_aluno",
-  nacionalidade: "nacionalidade",
-  naturalidade: "naturalidade",
-  ingresso: "data_ingresso",
-  numero: "numero",
-  emissao: "data_emissao",
-  conclusao: "data_conclusao",
-  registro: "numero_registro",
-  dataregistro: "data_registro",
-  curso: "curso",
-  emec_curso: "codigo_emec_curso",
-  habilitacao: "habilitacao",
-  titulo: "titulo_conferido",
-  grau: "grau",
-  endcurso: "endereco_curso",
-  polo: "polo",
-  autorizacao: "ato_autorizacao",
-  reconhecimento: "ato_reconhecimento",
-  renovacao: "ato_renovacao",
-  instituicao: "instituicao",
-  emec_inst: "codigo_emec_instituicao",
-  cnpj_inst: "cnpj_instituicao",
-  end_inst: "endereco_instituicao",
-  credenciamento: "ato_credenciamento",
-  recredenciamento: "ato_recredenciamento",
-  mantenedora: "mantenedora",
-  registradora: "instituicao_registradora",
-  emec_reg: "codigo_emec_registradora",
-  cnpj_reg: "cnpj_registradora",
-  end_reg: "endereco_registradora"
+  codigo:"codigo",
+  nome:"nome_aluno",
+  cpf:"cpf",
+  nascimento:"data_nascimento",
+  nacionalidade:"nacionalidade",
+  naturalidade:"naturalidade",
+  ingresso:"data_ingresso",
+  numero:"numero",
+  emissao:"data_emissao",
+  conclusao:"data_conclusao",
+  registro:"numero_registro",
+  dataregistro:"data_registro",
+  curso:"curso",
+  emec_curso:"codigo_emec_curso",
+  habilitacao:"habilitacao",
+  titulo:"titulo_conferido",
+  grau:"grau",
+  endcurso:"endereco_curso",
+  polo:"polo",
+  autorizacao:"ato_autorizacao",
+  reconhecimento:"ato_reconhecimento",
+  renovacao:"ato_renovacao",
+  instituicao:"instituicao",
+  emec_inst:"codigo_emec_instituicao",
+  cnpj_inst:"cnpj_instituicao",
+  end_inst:"endereco_instituicao",
+  credenciamento:"ato_credenciamento",
+  recredenciamento:"ato_recredenciamento",
+  mantenedora:"mantenedora",
+  registradora:"instituicao_registradora",
+  emec_reg:"codigo_emec_registradora",
+  cnpj_reg:"cnpj_registradora",
+  end_reg:"endereco_registradora"
 };
+
+let diplomaAtual = null;
 
 function formatar(valor) {
   if (valor === null || valor === undefined || valor === "") {
@@ -497,6 +438,8 @@ function formatar(valor) {
 }
 
 function mostrarDiploma(diploma) {
+  diplomaAtual = diploma;
+
   for (const [id, propriedade] of Object.entries(campos)) {
     const elemento = document.getElementById("r_" + id);
 
@@ -517,10 +460,11 @@ async function consultarDiploma(codigo) {
   mensagem.style.display = "block";
   mensagem.textContent = "Consultando diploma...";
   botao.disabled = true;
+  diplomaAtual = null;
 
   try {
-    const { data, error } = await db.rpc("consultar_diploma", {
-      p_codigo: codigo.trim()
+    const {data, error} = await db.rpc("consultar_diploma", {
+      p_codigo:codigo.trim()
     });
 
     if (error) throw error;
@@ -542,19 +486,93 @@ async function consultarDiploma(codigo) {
   }
 }
 
+function escaparXML(valor) {
+  return String(valor ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function baixarXML() {
+  if (!diplomaAtual) {
+    alert("Consulte um diploma antes de baixar o XML.");
+    return;
+  }
+
+  const camposXML = Object.entries(campos);
+
+  const conteudo = camposXML.map(([nome, propriedade]) => {
+    return `  <${nome}>${escaparXML(diplomaAtual[propriedade] ?? "")}</${nome}>`;
+  }).join("\n");
+
+  const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<diploma>
+${conteudo}
+  <status>${escaparXML(diplomaAtual.status ?? "valido")}</status>
+</diploma>`;
+
+  const arquivo = new Blob([xml], {
+    type:"application/xml;charset=utf-8"
+  });
+
+  const url = URL.createObjectURL(arquivo);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `diploma-${diplomaAtual.codigo || "validacao"}.xml`;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+async function baixarPDF() {
+  if (!diplomaAtual) {
+    alert("Consulte um diploma antes de baixar o PDF.");
+    return;
+  }
+
+  const botao = document.getElementById("btnPdf");
+  botao.disabled = true;
+
+  try {
+    const {data, error} = await db.functions.invoke("gerar-link-pdf", {
+      body: {codigo:diplomaAtual.codigo}
+    });
+
+    if (error) throw error;
+
+    if (!data || !data.signedUrl) {
+      throw new Error("A função não retornou o link seguro do PDF.");
+    }
+
+    window.open(data.signedUrl, "_blank");
+
+  } catch (erro) {
+    console.error("Erro ao baixar PDF:", erro);
+    alert("O download do PDF ainda precisa ser configurado no Supabase. O arquivo continua protegido.");
+  } finally {
+    botao.disabled = false;
+  }
+}
+
 document.getElementById("formBusca").addEventListener("submit", function(event) {
   event.preventDefault();
 
   const codigo = document.getElementById("codigo").value.trim();
 
-  if (codigo) {
-    consultarDiploma(codigo);
-  }
+  if (codigo) consultarDiploma(codigo);
 });
 
-// Consulta automática pelo link individual:
-// https://diplomas-b3.vercel.app/validar/CODIGO
-// Também aceita ?codigo=CODIGO
+document.getElementById("btnXml").addEventListener("click", baixarXML);
+document.getElementById("btnPdf").addEventListener("click", baixarPDF);
+
+// Consulta automática por link individual ou parâmetro ?codigo=
 
 const parametros = new URLSearchParams(window.location.search);
 const codigoPorParametro = parametros.get("codigo");
@@ -572,6 +590,5 @@ if (codigoInicial) {
   consultarDiploma(codigoInicial);
 }
 </script>
-
 </body>
 </html>
