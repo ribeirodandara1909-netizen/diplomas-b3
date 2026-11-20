@@ -1,0 +1,230 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diplomas B3 | Validação de Diplomas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#f5f8fd;color:#10264d}
+header{background:white;padding:20px 7%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 12px #10264d12}
+.logo{font-size:25px;font-weight:800;color:#123c78}
+.logo span{color:#1685d8}
+header p{font-size:11px;color:#73839c;margin-top:4px}
+nav a{color:#23436d;text-decoration:none;margin-left:22px;font-size:13px;font-weight:600}
+.hero{background:linear-gradient(110deg,#092e64ed,#126bb9dc),url('https://images.unsplash.com/photo-1523050854058-8df90110c9c1?w=1600') center/cover;padding:75px 7%;color:white;text-align:center}
+.hero h1{font-size:38px;max-width:750px;margin:auto;line-height:1.2}
+.hero p{margin:18px auto 0;max-width:620px;line-height:1.7;color:#e2efff}
+.container{max-width:760px;margin:-35px auto 55px;padding:0 18px;position:relative}
+.card{background:white;border-radius:16px;padding:35px;box-shadow:0 12px 40px #173b6817}
+.card h2{text-align:center;font-size:23px;margin-bottom:10px;color:#123c78}
+.subtitle{text-align:center;color:#71819a;font-size:13px;margin-bottom:28px}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 8px;color:#263e60}
+input{width:100%;padding:14px;border:1px solid #d9e2ee;border-radius:8px;font-size:14px;outline:none;background:#fbfdff}
+input:focus{border-color:#1685d8;box-shadow:0 0 0 3px #1685d81a}
+button{width:100%;border:0;background:#1268b5;color:white;padding:16px;border-radius:8px;font-size:15px;font-weight:700;margin-top:24px;cursor:pointer}
+button:hover{background:#0b4f91}
+button:disabled{opacity:.6;cursor:wait}
+#resultado{margin-top:22px}
+.resultado{padding:20px;border-radius:10px;line-height:1.8;font-size:14px}
+.valido{background:#e9f8ef;border:1px solid #a9dfbd;color:#176b38}
+.invalido{background:#fff0f0;border:1px solid #f1c1c1;color:#a42b2b}
+.resultado h3{font-size:18px;margin-bottom:8px}
+.features{max-width:1050px;margin:50px auto;padding:0 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.feature{background:white;padding:25px 18px;border-radius:12px;text-align:center;box-shadow:0 5px 20px #173b680b}
+.feature strong{display:block;color:#164b83;margin:12px 0 8px}
+.feature p{font-size:12px;color:#74839a;line-height:1.6}
+.faq{max-width:850px;margin:55px auto;padding:0 20px}
+.faq h2{text-align:center;color:#123c78;margin-bottom:25px}
+.faq article{background:white;padding:20px;margin-bottom:12px;border-radius:9px}
+.faq h3{font-size:14px;margin-bottom:8px;color:#174879}
+.faq p{font-size:13px;color:#71819a;line-height:1.6}
+footer{background:#092d5c;color:#dceaff;text-align:center;padding:30px 15px;font-size:12px;line-height:2}
+@media(max-width:750px){
+header{padding:17px 5%;flex-direction:column;gap:14px}
+nav a{margin:0 8px;font-size:11px}
+.hero{padding:65px 6%}
+.hero h1{font-size:29px}
+.card{padding:25px 19px}
+.features{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <div class="logo">Diplomas <span>B3</span></div>
+    <p>Autenticidade que gera confiança</p>
+  </div>
+  <nav>
+    <a href="#inicio">Início</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#duvidas">Dúvidas</a>
+  </nav>
+</header>
+
+<section class="hero" id="inicio">
+  <h1>Valide seu Diploma de forma rápida e segura</h1>
+  <p>Consulte a autenticidade do seu diploma de maneira simples, transparente e segura.</p>
+</section>
+
+<main class="container">
+  <section class="card">
+    <h2>Validação de Diploma</h2>
+    <p class="subtitle">Informe os dados exatamente como aparecem no diploma.</p>
+
+    <form id="formulario">
+      <label for="codigo">Código de validação</label>
+      <input id="codigo" type="text" placeholder="Digite o código do diploma" required>
+
+      <label for="nome">Nome completo do aluno</label>
+      <input id="nome" type="text" placeholder="Nome completo" required>
+
+      <label for="numero">Número do diploma</label>
+      <input id="numero" type="text" placeholder="Número do diploma" required>
+
+      <label for="data">Data de emissão</label>
+      <input id="data" type="date" required>
+
+      <button type="submit" id="botao">🔍 Validar Diploma</button>
+    </form>
+
+    <div id="resultado" aria-live="polite"></div>
+  </section>
+</main>
+
+<section class="features" id="sobre">
+  <div class="feature">
+    <div>🛡️</div>
+    <strong>Segurança</strong>
+    <p>Consulta de dados diretamente no sistema.</p>
+  </div>
+  <div class="feature">
+    <div>⚡</div>
+    <strong>Agilidade</strong>
+    <p>Validação rápida e simples.</p>
+  </div>
+  <div class="feature">
+    <div>🔎</div>
+    <strong>Transparência</strong>
+    <p>Informações verificadas no cadastro.</p>
+  </div>
+  <div class="feature">
+    <div>🎓</div>
+    <strong>Credibilidade</strong>
+    <p>Mais confiança na autenticidade documental.</p>
+  </div>
+</section>
+
+<section class="faq" id="duvidas">
+  <h2>Dúvidas Frequentes</h2>
+  <article>
+    <h3>Como validar meu diploma?</h3>
+    <p>Preencha o código, nome completo, número e data de emissão nos campos acima.</p>
+  </article>
+  <article>
+    <h3>O que acontece se os dados não forem encontrados?</h3>
+    <p>O sistema informará que não foi possível confirmar a autenticidade com os dados informados.</p>
+  </article>
+  <article>
+    <h3>Preciso preencher todos os campos?</h3>
+    <p>Sim. Todos os dados são necessários para realizar a consulta.</p>
+  </article>
+</section>
+
+<footer>
+  <strong>Diplomas B3</strong><br>
+  Autenticidade que gera confiança.<br>
+  © 2026 Diplomas B3. Todos os direitos reservados.
+</footer>
+
+<script>
+const SUPABASE_URL = "https://csbwjtfudvuzscodbrid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Vz8dWvlsFTVTUWPjJkjsMg_iizsxDJI";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const formulario = document.getElementById("formulario");
+const resultado = document.getElementById("resultado");
+const botao = document.getElementById("botao");
+
+formulario.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  resultado.innerHTML = "";
+  botao.disabled = true;
+  botao.textContent = "Consultando...";
+
+  const dados = {
+    p_codigo: document.getElementById("codigo").value.trim(),
+    p_nome_aluno: document.getElementById("nome").value.trim(),
+    p_numero: document.getElementById("numero").value.trim(),
+    p_data_emissao: document.getElementById("data").value
+  };
+
+  try {
+    const { data, error } = await supabaseClient.rpc(
+      "validar_diploma",
+      dados
+    );
+
+    if (error) throw error;
+
+    if (data && data.length > 0) {
+      const diploma = data[0];
+
+      resultado.innerHTML = `
+        <div class="resultado valido">
+          <h3>✓ Diploma localizado</h3>
+          <strong>Autenticidade confirmada</strong><br>
+          <strong>Aluno:</strong> ${escapar(diploma.nome_aluno)}<br>
+          <strong>Número:</strong> ${escapar(diploma.numero)}<br>
+          <strong>Curso:</strong> ${escapar(diploma.curso)}<br>
+          <strong>Instituição:</strong> ${escapar(diploma.instituicao)}<br>
+          <strong>Código:</strong> ${escapar(diploma.codigo)}<br>
+          <strong>Status:</strong> Válido
+        </div>
+      `;
+    } else {
+      resultado.innerHTML = `
+        <div class="resultado invalido">
+          <h3>✕ Diploma não localizado</h3>
+          Não foi possível confirmar a autenticidade.
+          Verifique os dados informados ou entre em contato com a instituição.
+        </div>
+      `;
+    }
+
+  } catch (erro) {
+    console.error(erro);
+    resultado.innerHTML = `
+      <div class="resultado invalido">
+        <h3>Erro na consulta</h3>
+        Não foi possível realizar a validação neste momento.
+        Tente novamente mais tarde.
+      </div>
+    `;
+  } finally {
+    botao.disabled = false;
+    botao.textContent = "🔍 Validar Diploma";
+  }
+});
+
+function escapar(valor) {
+  const div = document.createElement("div");
+  div.textContent = valor ?? "";
+  return div.innerHTML;
+}
+</script>
+
+</body>
+</html>
