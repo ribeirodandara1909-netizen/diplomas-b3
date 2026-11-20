@@ -81,10 +81,26 @@ button:disabled{opacity:.6;cursor:wait}
 </section>
 
 <section id="adminPanel" class="hidden">
+
  <div class="card">
-  <h1>Cadastro de diploma</h1>
-  <p>Preencha as informações do diploma. Os campos não aplicáveis podem ficar vazios. Os dados serão utilizados na página pública de validação.</p>
+  <h1>Painel administrativo</h1>
+  <p>Cadastre novos diplomas ou localize um diploma já cadastrado para atualizar suas informações.</p>
  </div>
+
+ <section class="card">
+  <h2>Editar diploma já cadastrado</h2>
+  <p>Informe o código de validação para carregar um diploma existente. As alterações serão feitas no mesmo cadastro, sem gerar outro código.</p>
+  <div class="grid">
+   <div class="field">
+    <label for="codigoBusca">Código de validação</label>
+    <input id="codigoBusca" placeholder="Ex.: B3-F6171342121D">
+   </div>
+   <div class="field" style="align-self:end">
+    <button id="buscarBtn" type="button">Buscar diploma</button>
+   </div>
+  </div>
+  <div id="editMessage" role="status"></div>
+ </section>
 
  <form id="diplomaForm">
 
@@ -102,6 +118,14 @@ button:disabled{opacity:.6;cursor:wait}
     <div class="field">
      <label for="naturalidade">Naturalidade</label>
      <input id="naturalidade">
+    </div>
+    <div class="field">
+     <label for="cpf">CPF</label>
+     <input id="cpf" inputmode="numeric" maxlength="14" placeholder="000.000.000-00">
+    </div>
+    <div class="field">
+     <label for="data_nascimento">Data de nascimento</label>
+     <input id="data_nascimento" type="date">
     </div>
     <div class="field">
      <label for="data_ingresso">Data de ingresso</label>
@@ -241,18 +265,19 @@ button:disabled{opacity:.6;cursor:wait}
   <section class="card">
    <h2>6. Arquivo do diploma</h2>
    <div class="field">
-    <label for="arquivo">Anexar diploma original em PDF *</label>
-    <input id="arquivo" type="file" accept="application/pdf,.pdf" required>
-    <div class="note">Somente PDF. Tamanho máximo: 15 MB.</div>
+    <label for="arquivo">Anexar ou substituir diploma original em PDF</label>
+    <input id="arquivo" type="file" accept="application/pdf,.pdf">
+    <div class="note">Somente PDF. Tamanho máximo: 15 MB. Na edição, deixe vazio para manter o arquivo atual.</div>
    </div>
   </section>
 
   <section class="card">
    <h2>7. Finalizar cadastro</h2>
-   <p>O código de validação será criado automaticamente após o cadastro.</p>
+   <p id="formHelp">O código de validação será criado automaticamente após o cadastro.</p>
    <div class="actions">
     <button id="saveBtn" type="submit">Cadastrar diploma</button>
-    <button type="reset" class="secondary">Limpar formulário</button>
+    <button id="clearFormBtn" type="button" class="secondary">Limpar formulário</button>
+    <button id="cancelEditBtn" type="button" class="secondary hidden">Cancelar edição</button>
    </div>
    <div id="formMessage" role="status"></div>
    <div id="createdCode" class="codebox hidden">
@@ -370,38 +395,178 @@ function copiarCodigo() {
   }
 }
 
+const colunasBanco = {
+  nome: "nome_aluno",
+  nacionalidade: "nacionalidade",
+  naturalidade: "naturalidade",
+  cpf: "cpf",
+  data_nascimento: "data_nascimento",
+  data_ingresso: "data_ingresso",
+  numero: "numero",
+  data_emissao: "data_emissao",
+  data_conclusao: "data_conclusao",
+  numero_registro: "numero_registro",
+  data_registro: "data_registro",
+  curso: "curso",
+  codigo_emec_curso: "codigo_emec_curso",
+  habilitacao: "habilitacao",
+  titulo_conferido: "titulo_conferido",
+  grau: "grau",
+  endereco_curso: "endereco_curso",
+  polo: "polo",
+  ato_autorizacao: "ato_autorizacao",
+  ato_reconhecimento: "ato_reconhecimento",
+  ato_renovacao: "ato_renovacao",
+  instituicao: "instituicao",
+  codigo_emec_instituicao: "codigo_emec_instituicao",
+  cnpj_instituicao: "cnpj_instituicao",
+  endereco_instituicao: "endereco_instituicao",
+  ato_credenciamento: "ato_credenciamento",
+  ato_recredenciamento: "ato_recredenciamento",
+  mantenedora: "mantenedora",
+  instituicao_registradora: "instituicao_registradora",
+  codigo_emec_registradora: "codigo_emec_registradora",
+  cnpj_registradora: "cnpj_registradora",
+  endereco_registradora: "endereco_registradora"
+};
+
+let codigoEmEdicao = null;
+
+function mensagemEdicao(texto, tipo = "") {
+  const el = document.getElementById("editMessage");
+  el.className = tipo;
+  el.textContent = texto;
+}
+
+function preencherFormulario(registro) {
+  for (const [id, coluna] of Object.entries(colunasBanco)) {
+    const campo = document.getElementById(id);
+    if (campo) campo.value = registro[coluna] || "";
+  }
+}
+
+function iniciarEdicao(registro) {
+  codigoEmEdicao = registro.codigo;
+  preencherFormulario(registro);
+  document.getElementById("arquivo").value = "";
+  document.getElementById("saveBtn").textContent = "Salvar alterações";
+  document.getElementById("formHelp").textContent =
+    "Editando " + registro.codigo + ". O código de validação será mantido.";
+  document.getElementById("cancelEditBtn").classList.remove("hidden");
+  document.getElementById("createdCode").classList.add("hidden");
+  document.getElementById("diplomaForm").scrollIntoView({
+    behavior: "smooth", block: "start"
+  });
+}
+
+function cancelarEdicao() {
+  codigoEmEdicao = null;
+  document.getElementById("diplomaForm").reset();
+  document.getElementById("saveBtn").textContent = "Cadastrar diploma";
+  document.getElementById("formHelp").textContent =
+    "O código de validação será criado automaticamente após o cadastro.";
+  document.getElementById("cancelEditBtn").classList.add("hidden");
+  mensagemEdicao("Edição cancelada. Você pode cadastrar um novo diploma.");
+}
+
+document.getElementById("buscarBtn").addEventListener("click", async () => {
+  const codigo = document.getElementById("codigoBusca").value.trim();
+  if (!codigo) {
+    mensagemEdicao("Digite o código do diploma.", "error");
+    return;
+  }
+
+  const botao = document.getElementById("buscarBtn");
+  botao.disabled = true;
+  mensagemEdicao("Buscando diploma...");
+
+  try {
+    const { data: sessaoData, error: sessaoError } = await db.auth.getSession();
+    if (sessaoError || !sessaoData.session ||
+        sessaoData.session.user.id !== ADMIN_UID) {
+      throw new Error("Sua sessão administrativa expirou. Entre novamente.");
+    }
+
+    const { data, error } = await db
+      .from("diplomas")
+      .select("*")
+      .ilike("codigo", codigo)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error("Nenhum diploma encontrado com esse código.");
+
+    iniciarEdicao(data);
+    mensagemEdicao("Diploma encontrado. Confira os dados no formulário abaixo.", "success");
+  } catch (error) {
+    console.error(error);
+    mensagemEdicao("Não foi possível buscar: " + error.message, "error");
+  } finally {
+    botao.disabled = false;
+  }
+});
+
+document.getElementById("cancelEditBtn").addEventListener("click", cancelarEdicao);
+
+document.getElementById("clearFormBtn").addEventListener("click", () => {
+  if (codigoEmEdicao) {
+    cancelarEdicao();
+  } else {
+    document.getElementById("diplomaForm").reset();
+    document.getElementById("formMessage").textContent = "";
+  }
+});
+
+document.getElementById("cpf").addEventListener("input", (event) => {
+  const digits = event.target.value.replace(/\D/g, "").slice(0, 11);
+  let formatted = digits;
+
+  if (digits.length > 9) {
+    formatted = digits.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+  } else if (digits.length > 6) {
+    formatted = digits.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+  } else if (digits.length > 3) {
+    formatted = digits.replace(/(\d{3})(\d{1,3})/, "$1.$2");
+  }
+
+  event.target.value = formatted;
+});
+
 document.getElementById("diplomaForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const botao = document.getElementById("saveBtn");
   const mensagem = document.getElementById("formMessage");
-  const arquivoInput = document.getElementById("arquivo");
-  const arquivo = arquivoInput.files[0];
+  const arquivo = document.getElementById("arquivo").files[0];
+  const estaEditando = Boolean(codigoEmEdicao);
 
   mensagem.className = "";
   document.getElementById("createdCode").classList.add("hidden");
 
-  if (!arquivo) {
+  if (!estaEditando && !arquivo) {
     mensagem.className = "error";
     mensagem.textContent = "Selecione o arquivo PDF do diploma.";
     return;
   }
 
-  if (arquivo.type !== "application/pdf" && !arquivo.name.toLowerCase().endsWith(".pdf")) {
+  if (arquivo && arquivo.type !== "application/pdf" &&
+      !arquivo.name.toLowerCase().endsWith(".pdf")) {
     mensagem.className = "error";
     mensagem.textContent = "O arquivo precisa estar no formato PDF.";
     return;
   }
 
-  if (arquivo.size > 15 * 1024 * 1024) {
+  if (arquivo && arquivo.size > 15 * 1024 * 1024) {
     mensagem.className = "error";
     mensagem.textContent = "O PDF ultrapassa o limite de 15 MB.";
     return;
   }
 
   botao.disabled = true;
-  botao.textContent = "Cadastrando...";
+  botao.textContent = estaEditando ? "Salvando..." : "Cadastrando...";
   mensagem.textContent = "Verificando acesso...";
+
+  let caminhoNovo = null;
 
   try {
     const { data: sessaoData, error: sessaoError } = await db.auth.getSession();
@@ -411,94 +576,90 @@ document.getElementById("diplomaForm").addEventListener("submit", async (event) 
       throw new Error("Sua sessão administrativa expirou. Entre novamente.");
     }
 
-    const codigo = gerarCodigo();
-    const caminho = codigo + "/" + crypto.randomUUID() + ".pdf";
+    const codigoNovo = estaEditando ? null : gerarCodigo();
+    const registro = {};
 
-    mensagem.textContent = "Enviando PDF...";
-
-    const { error: uploadError } = await db.storage
-      .from("diplomas")
-      .upload(caminho, arquivo, {
-        contentType: "application/pdf",
-        upsert: false
-      });
-
-    if (uploadError) throw uploadError;
-
-    const registro = {
-      codigo: codigo,
-      nome_aluno: valor("nome"),
-      numero: valor("numero"),
-      data_emissao: valor("data_emissao"),
-      curso: valor("curso"),
-      instituicao: valor("instituicao"),
-      data_conclusao: valor("data_conclusao"),
-      arquivo_url: caminho,
-      status: "valido",
-
-      nacionalidade: valor("nacionalidade"),
-      naturalidade: valor("naturalidade"),
-      data_ingresso: valor("data_ingresso"),
-      numero_registro: valor("numero_registro"),
-      data_registro: valor("data_registro"),
-
-      codigo_emec_curso: valor("codigo_emec_curso"),
-      habilitacao: valor("habilitacao"),
-      titulo_conferido: valor("titulo_conferido"),
-      grau: valor("grau"),
-      endereco_curso: valor("endereco_curso"),
-      polo: valor("polo"),
-      ato_autorizacao: valor("ato_autorizacao"),
-      ato_reconhecimento: valor("ato_reconhecimento"),
-      ato_renovacao: valor("ato_renovacao"),
-
-      codigo_emec_instituicao: valor("codigo_emec_instituicao"),
-      cnpj_instituicao: valor("cnpj_instituicao"),
-      endereco_instituicao: valor("endereco_instituicao"),
-      ato_credenciamento: valor("ato_credenciamento"),
-      ato_recredenciamento: valor("ato_recredenciamento"),
-      mantenedora: valor("mantenedora"),
-
-      instituicao_registradora: valor("instituicao_registradora"),
-      codigo_emec_registradora: valor("codigo_emec_registradora"),
-      cnpj_registradora: valor("cnpj_registradora"),
-      endereco_registradora: valor("endereco_registradora")
-    };
-
-    mensagem.textContent = "Salvando informações do diploma...";
-
-    const { error: insertError } = await db
-      .from("diplomas")
-      .insert([registro]);
-
-    if (insertError) {
-      throw new Error(
-        "O PDF foi enviado, mas o cadastro no banco falhou: " + insertError.message +
-        ". O arquivo enviado ficou em: " + caminho
-      );
+    for (const [id, coluna] of Object.entries(colunasBanco)) {
+      registro[coluna] = valor(id);
     }
 
-    ultimoCodigo = codigo;
-    document.getElementById("codeValue").textContent = codigo;
-    document.getElementById("createdCode").classList.remove("hidden");
+    if (arquivo) {
+      const codigoArquivo = estaEditando ? codigoEmEdicao : codigoNovo;
+      caminhoNovo = codigoArquivo + "/" + crypto.randomUUID() + ".pdf";
 
-    mensagem.className = "success";
-    mensagem.textContent = "Diploma cadastrado com sucesso!";
+      mensagem.textContent = "Enviando PDF...";
 
-    document.getElementById("diplomaForm").reset();
+      const { error: uploadError } = await db.storage
+        .from("diplomas")
+        .upload(caminhoNovo, arquivo, {
+          contentType: "application/pdf",
+          upsert: false
+        });
 
-    document.getElementById("createdCode").scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+      if (uploadError) throw uploadError;
+
+      registro.arquivo_url = caminhoNovo;
+    }
+
+    if (estaEditando) {
+      mensagem.textContent = "Salvando alterações...";
+
+      const { error } = await db
+        .from("diplomas")
+        .update(registro)
+        .eq("codigo", codigoEmEdicao);
+
+      if (error) {
+        throw new Error("As alterações não foram salvas: " + error.message +
+          (caminhoNovo ? ". O novo PDF foi enviado para: " + caminhoNovo : ""));
+      }
+
+      mensagem.className = "success";
+      mensagem.textContent = "Diploma atualizado com sucesso! O código " +
+        codigoEmEdicao + " foi mantido.";
+
+      mensagemEdicao("Alterações salvas com sucesso.", "success");
+      document.getElementById("codigoBusca").value = codigoEmEdicao;
+      document.getElementById("arquivo").value = "";
+
+    } else {
+      registro.codigo = codigoNovo;
+      registro.status = "valido";
+
+      mensagem.textContent = "Salvando informações do diploma...";
+
+      const { error } = await db
+        .from("diplomas")
+        .insert([registro]);
+
+      if (error) {
+        throw new Error("O cadastro no banco falhou: " + error.message +
+          (caminhoNovo ? ". O PDF enviado ficou em: " + caminhoNovo : ""));
+      }
+
+      ultimoCodigo = codigoNovo;
+      document.getElementById("codeValue").textContent = codigoNovo;
+      document.getElementById("createdCode").classList.remove("hidden");
+
+      mensagem.className = "success";
+      mensagem.textContent = "Diploma cadastrado com sucesso!";
+
+      document.getElementById("diplomaForm").reset();
+
+      document.getElementById("createdCode").scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
 
   } catch (error) {
     console.error(error);
     mensagem.className = "error";
     mensagem.textContent = "Erro: " + error.message;
+
   } finally {
     botao.disabled = false;
-    botao.textContent = "Cadastrar diploma";
+    botao.textContent = codigoEmEdicao ? "Salvar alterações" : "Cadastrar diploma";
   }
 });
 
