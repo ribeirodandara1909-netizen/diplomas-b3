@@ -3,253 +3,387 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diplomas B3 | Validação de Diplomas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Diplomas B3 | Validação</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --petroleo:#123E43;
-  --petroleo2:#1B5558;
-  --verde:#237B63;
-  --cobre:#C99B6B;
-  --fundo:#F2F4F1;
-  --branco:#FFFFFF;
-  --texto:#26383B;
-  --suave:#718083;
-  --borda:#E2E8E4;
-  --verde-claro:#E8F4ED;
+  --verde: #55c39d;
+  --verde-escuro: #238b68;
+  --texto: #353b3e;
+  --cinza: #85898b;
+  --borda: #dedede;
+  --fundo: #ffffff;
 }
-*{box-sizing:border-box}
-body{
-  margin:0;
-  background:var(--fundo);
-  color:var(--texto);
-  font-family:'DM Sans',sans-serif;
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--texto);
+  font-family: 'Inter', sans-serif;
 }
-.topo{
-  background:var(--petroleo);
-  color:white;
-  padding:22px 20px;
-  border-bottom:4px solid var(--cobre);
+
+.topo {
+  background: #fff;
+  padding: 25px 22px 22px;
+  border-bottom: 2px solid #e8e8e8;
 }
-.topo-interno{
-  max-width:1120px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
+
+.topo-conteudo {
+  max-width: 1050px;
+  margin: auto;
 }
-.marca{display:flex;align-items:center;gap:12px}
-.logo{
-  width:43px;height:43px;
-  border:1px solid var(--cobre);
-  border-radius:12px;
-  display:grid;place-items:center;
-  color:var(--cobre);
-  font-weight:800;font-size:18px;
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
 }
-.marca h1{font-size:21px;margin:0;font-weight:800;letter-spacing:1px}
-.marca span{display:block;font-size:10px;letter-spacing:2px;color:#D4DEDA;margin-top:3px}
-.topo-tag{font-size:12px;color:#D4DEDA}
-main{max-width:1120px;margin:42px auto;padding:0 18px}
-.intro{text-align:center;margin-bottom:30px}
-.selo-topo{
-  display:inline-block;
-  color:var(--verde);
-  background:var(--verde-claro);
-  padding:7px 14px;
-  border-radius:30px;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:1.2px;
+
+.logo {
+  width: 49px;
+  height: 49px;
+  color: #292929;
+  font-size: 35px;
+  font-weight: 800;
+  letter-spacing: -3px;
+  display: flex;
+  align-items: center;
 }
-.intro h2{
-  font-family:'Playfair Display',serif;
-  font-size:34px;
-  color:var(--petroleo);
-  margin:15px 0 8px;
+
+.logo span {
+  color: #292929;
 }
-.intro p{color:var(--suave);font-size:14px;margin:0}
-.busca{
-  max-width:760px;
-  margin:0 auto 30px;
-  background:white;
-  padding:12px;
-  border-radius:16px;
-  box-shadow:0 8px 28px #173d4310;
-  display:flex;
-  gap:10px;
-  border:1px solid var(--borda);
+
+.marca-nome {
+  font-size: 12px;
+  color: #777;
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin-top: 4px;
 }
-.busca input{
-  flex:1;min-width:0;border:0;outline:0;
-  padding:13px 14px;font:inherit;font-size:15px;
-  color:var(--texto);
+
+.busca {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
 }
-.busca button{
-  border:0;border-radius:11px;
-  background:var(--petroleo);
-  color:white;padding:0 25px;
-  font:inherit;font-weight:700;
-  cursor:pointer;
+
+.busca input {
+  flex: 1;
+  min-width: 0;
+  height: 62px;
+  padding: 0 24px;
+  border: 2px solid #ccc;
+  border-radius: 9px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  color: #333;
 }
-.busca button:hover{background:var(--petroleo2)}
-#mensagem{
-  max-width:760px;margin:0 auto 20px;
-  text-align:center;color:var(--suave);font-size:14px;
+
+.busca input:focus {
+  border-color: var(--verde);
 }
-.resultado{display:none}
-.painel{
-  background:white;border:1px solid var(--borda);
-  border-radius:17px;margin-bottom:18px;
-  overflow:hidden;box-shadow:0 5px 22px #173d4308;
+
+.busca input::placeholder {
+  color: #777;
 }
-.status{
-  background:var(--verde-claro);
-  padding:22px 25px;
-  display:flex;align-items:center;justify-content:space-between;
-  gap:15px;flex-wrap:wrap;
-  border-bottom:1px solid #D6E9DC;
+
+.busca button {
+  width: 72px;
+  height: 62px;
+  border: 0;
+  border-radius: 10px;
+  background: #ededed;
+  color: #353b3e;
+  font-size: 27px;
+  cursor: pointer;
 }
-.status-esquerda{display:flex;align-items:center;gap:13px}
-.status-icone{
-  width:43px;height:43px;border-radius:50%;
-  background:var(--verde);color:white;
-  display:grid;place-items:center;font-size:22px;
+
+.busca button:disabled {
+  opacity: .6;
 }
-.status strong{display:block;color:#176044;font-size:16px;letter-spacing:.5px}
-.status small{color:#547568;font-size:12px}
-.codigo{
-  background:white;border:1px solid #D6E9DC;
-  border-radius:9px;padding:9px 13px;
-  font-size:12px;color:var(--petroleo);
+
+main {
+  max-width: 1050px;
+  margin: auto;
 }
-.acoes{padding:18px 22px;display:flex;gap:10px;flex-wrap:wrap}
-.acao{
-  border:1px solid var(--borda);
-  padding:12px 16px;border-radius:9px;
-  font:inherit;font-size:13px;font-weight:700;
-  background:#F8FAF8;color:var(--suave);
-  cursor:not-allowed;
+
+.resultado {
+  display: none;
 }
-.acao.principal{background:var(--petroleo);color:white;border-color:var(--petroleo)}
-.acao:disabled{opacity:.65}
-.secao{padding:22px 25px}
-.secao + .secao{border-top:1px solid var(--borda)}
-.secao-titulo{
-  display:flex;align-items:center;gap:10px;
-  color:var(--petroleo);font-weight:800;
-  font-size:15px;margin:0 0 19px;
+
+.status-area {
+  text-align: center;
+  padding: 30px 20px 28px;
+  border-bottom: 2px solid #e8e8e8;
 }
-.secao-titulo:before{
-  content:"";width:4px;height:21px;
-  border-radius:5px;background:var(--cobre);
+
+.status-titulo {
+  color: var(--verde);
+  font-size: clamp(30px, 6vw, 58px);
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 0;
 }
-.grade{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:20px 30px;
+
+.check {
+  background: var(--verde);
+  color: white;
+  width: 37px;
+  height: 37px;
+  min-width: 37px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
 }
-.campo small{
-  display:block;color:#899596;font-size:10px;
-  font-weight:800;text-transform:uppercase;
-  letter-spacing:.8px;margin-bottom:6px;
+
+.codigo {
+  font-size: 20px;
+  margin: 27px 0 30px;
+  overflow-wrap: anywhere;
 }
-.campo div{font-size:14px;font-weight:600;overflow-wrap:anywhere}
-.rodape{
-  text-align:center;padding:28px 15px 35px;
-  color:#899596;font-size:11px;
+
+.downloads {
+  max-width: 750px;
+  margin: auto;
+  display: grid;
+  gap: 18px;
 }
-.rodape strong{color:var(--petroleo)}
-.erro{
-  background:#FFF0EF;color:#A13C35;
-  border:1px solid #F0D0CC;padding:15px;
-  border-radius:10px;
+
+.download {
+  min-height: 68px;
+  border: 2px solid #dedede;
+  border-radius: 9px;
+  background: white;
+  color: #42484b;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  cursor: not-allowed;
+  opacity: .85;
 }
-@media(max-width:600px){
-  main{margin:28px auto;padding:0 12px}
-  .topo{padding:17px 14px}
-  .topo-tag{display:none}
-  .intro h2{font-size:27px}
-  .busca{padding:8px;gap:5px}
-  .busca input{padding:12px 8px;font-size:13px}
-  .busca button{padding:0 15px;font-size:13px}
-  .status{padding:18px}
-  .secao{padding:20px 17px}
-  .grade{grid-template-columns:1fr;gap:17px}
-  .acoes{padding:15px}
-  .acao{width:100%}
+
+.download .icone {
+  font-size: 27px;
+}
+
+.download small {
+  display: block;
+  font-size: 10px;
+  color: #999;
+  margin-top: 3px;
+}
+
+.informacoes {
+  padding: 32px 25px 45px;
+}
+
+.titulo-informacoes {
+  color: #777d7f;
+  font-size: 23px;
+  font-weight: 600;
+  margin: 5px 0 35px;
+}
+
+.grupo {
+  border: 2px solid #d0d0d0;
+  border-radius: 7px;
+  padding: 35px 30px 25px;
+  margin: 0 0 34px;
+  position: relative;
+}
+
+.grupo-titulo {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  background: white;
+  padding: 0 15px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #41484a;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 30px 35px;
+}
+
+.campo {
+  min-width: 0;
+}
+
+.campo small {
+  display: block;
+  color: #929596;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .7px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.campo div {
+  font-size: 17px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: #303638;
+  font-weight: 400;
+}
+
+.mensagem {
+  text-align: center;
+  padding: 28px 18px;
+  font-size: 15px;
+  color: #777;
+}
+
+.erro {
+  display: inline-block;
+  max-width: 650px;
+  background: #fff0f0;
+  color: #a13c3c;
+  border: 1px solid #edcccc;
+  border-radius: 8px;
+  padding: 15px 18px;
+}
+
+.rodape {
+  border-top: 1px solid #e8e8e8;
+  padding: 25px 15px;
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+}
+
+.rodape strong {
+  color: #555;
+}
+
+@media(max-width:600px) {
+  .topo { padding: 25px 18px 20px; }
+  .marca { margin-bottom: 18px; }
+  .busca { gap: 9px; }
+  .busca input {
+    height: 60px;
+    padding: 0 18px;
+    font-size: 15px;
+  }
+  .busca button {
+    width: 65px;
+    height: 60px;
+  }
+  .status-area { padding: 30px 16px 27px; }
+  .status-titulo { gap: 10px; }
+  .check { width: 32px; height: 32px; min-width: 32px; font-size: 21px; }
+  .codigo { font-size: 17px; margin: 27px 0 29px; }
+  .download { min-height: 62px; font-size: 15px; }
+  .informacoes { padding: 30px 14px; }
+  .titulo-informacoes { font-size: 21px; margin-bottom: 38px; }
+  .grupo { padding: 38px 24px 28px; margin-bottom: 34px; }
+  .grupo-titulo { font-size: 14px; }
+  .grade { grid-template-columns: 1fr; gap: 29px; }
+  .campo small { font-size: 13px; }
+  .campo div { font-size: 17px; }
 }
 </style>
 </head>
 
 <body>
+
 <header class="topo">
-  <div class="topo-interno">
+  <div class="topo-conteudo">
     <div class="marca">
       <div class="logo">B3</div>
-      <div>
-        <h1>DIPLOMAS B3</h1>
-        <span>VALIDAÇÃO ACADÊMICA</span>
-      </div>
+      <div class="marca-nome">DIPLOMAS</div>
     </div>
-    <div class="topo-tag">Sistema de consulta e validação</div>
+
+    <form class="busca" id="formBusca">
+      <input
+        id="codigo"
+        type="text"
+        placeholder="Validação por código"
+        autocomplete="off"
+        required
+      >
+      <button type="submit" id="btnBuscar" aria-label="Consultar código">⌕</button>
+    </form>
   </div>
 </header>
 
 <main>
-  <section class="intro">
-    <span class="selo-topo">PORTAL DE VALIDAÇÃO</span>
-    <h2>Valide seu diploma</h2>
-    <p>Consulte a autenticidade das informações do documento acadêmico.</p>
-  </section>
-
-  <form class="busca" id="formBusca">
-    <input id="codigo" type="text" placeholder="Digite o código de validação" autocomplete="off" required>
-    <button type="submit" id="btnBuscar">⌕ Consultar</button>
-  </form>
-
-  <div id="mensagem">Informe o código apresentado no diploma para realizar a consulta.</div>
+  <div class="mensagem" id="mensagem">
+    Informe o código de validação para consultar o diploma.
+  </div>
 
   <section class="resultado" id="resultado">
-    <div class="painel">
-      <div class="status">
-        <div class="status-esquerda">
-          <div class="status-icone">✓</div>
-          <div>
-            <strong>DIPLOMA VÁLIDO</strong>
-            <small>Registro localizado e com status válido no sistema.</small>
-          </div>
-        </div>
-        <div class="codigo">CÓDIGO: <strong id="r_codigo"></strong></div>
+
+    <section class="status-area">
+      <h1 class="status-titulo">
+        <span class="check">✓</span>
+        Diploma válido
+      </h1>
+
+      <div class="codigo">
+        Código <span id="r_codigo"></span>
       </div>
 
-      <div class="acoes">
-        <button class="acao principal" disabled title="Acesso seguro ao PDF ainda em configuração">
-          ↓ Baixar representação visual — em configuração
+      <div class="downloads">
+        <button class="download" type="button" disabled>
+          <span class="icone">⇩</span>
+          <span>
+            Baixar representação visual
+            <small>Disponibilidade em configuração</small>
+          </span>
         </button>
-        <button class="acao" disabled title="Assinatura digital ainda não configurada">
-          ↓ XML assinado — em configuração
+
+        <button class="download" type="button" disabled>
+          <span class="icone">⇩</span>
+          <span>
+            Baixar XML assinado
+            <small>Assinatura digital em configuração</small>
+          </span>
         </button>
       </div>
-    </div>
+    </section>
 
-    <div class="painel">
-      <section class="secao">
-        <h3 class="secao-titulo">Dados do diplomado</h3>
+    <section class="informacoes">
+      <h2 class="titulo-informacoes">Dados públicos do diploma</h2>
+
+      <div class="grupo">
+        <div class="grupo-titulo">DIPLOMADO</div>
         <div class="grade">
-          <div class="campo"><small>Nome completo</small><div id="r_nome"></div></div>
+          <div class="campo"><small>Nome</small><div id="r_nome"></div></div>
           <div class="campo"><small>Nacionalidade</small><div id="r_nacionalidade"></div></div>
           <div class="campo"><small>Naturalidade</small><div id="r_naturalidade"></div></div>
           <div class="campo"><small>Data de ingresso</small><div id="r_ingresso"></div></div>
         </div>
-      </section>
+      </div>
 
-      <section class="secao">
-        <h3 class="secao-titulo">Dados do diploma</h3>
+      <div class="grupo">
+        <div class="grupo-titulo">DIPLOMA</div>
         <div class="grade">
           <div class="campo"><small>Número do diploma</small><div id="r_numero"></div></div>
           <div class="campo"><small>Data de emissão</small><div id="r_emissao"></div></div>
@@ -257,10 +391,10 @@ main{max-width:1120px;margin:42px auto;padding:0 18px}
           <div class="campo"><small>Número de registro</small><div id="r_registro"></div></div>
           <div class="campo"><small>Data de registro</small><div id="r_dataregistro"></div></div>
         </div>
-      </section>
+      </div>
 
-      <section class="secao">
-        <h3 class="secao-titulo">Dados do curso</h3>
+      <div class="grupo">
+        <div class="grupo-titulo">CURSO</div>
         <div class="grade">
           <div class="campo"><small>Curso</small><div id="r_curso"></div></div>
           <div class="campo"><small>Código e-MEC do curso</small><div id="r_emec_curso"></div></div>
@@ -273,10 +407,10 @@ main{max-width:1120px;margin:42px auto;padding:0 18px}
           <div class="campo"><small>Ato de reconhecimento</small><div id="r_reconhecimento"></div></div>
           <div class="campo"><small>Ato de renovação</small><div id="r_renovacao"></div></div>
         </div>
-      </section>
+      </div>
 
-      <section class="secao">
-        <h3 class="secao-titulo">Instituição emissora</h3>
+      <div class="grupo">
+        <div class="grupo-titulo">INSTITUIÇÃO EMISSORA</div>
         <div class="grade">
           <div class="campo"><small>Instituição</small><div id="r_instituicao"></div></div>
           <div class="campo"><small>Código e-MEC</small><div id="r_emec_inst"></div></div>
@@ -286,24 +420,25 @@ main{max-width:1120px;margin:42px auto;padding:0 18px}
           <div class="campo"><small>Ato de recredenciamento</small><div id="r_recredenciamento"></div></div>
           <div class="campo"><small>Mantenedora</small><div id="r_mantenedora"></div></div>
         </div>
-      </section>
+      </div>
 
-      <section class="secao">
-        <h3 class="secao-titulo">Instituição registradora</h3>
+      <div class="grupo">
+        <div class="grupo-titulo">INSTITUIÇÃO REGISTRADORA</div>
         <div class="grade">
           <div class="campo"><small>Instituição registradora</small><div id="r_registradora"></div></div>
           <div class="campo"><small>Código e-MEC</small><div id="r_emec_reg"></div></div>
           <div class="campo"><small>CNPJ</small><div id="r_cnpj_reg"></div></div>
           <div class="campo"><small>Endereço</small><div id="r_end_reg"></div></div>
         </div>
-      </section>
-    </div>
+      </div>
+
+    </section>
   </section>
 </main>
 
 <footer class="rodape">
   <strong>DIPLOMAS B3</strong><br>
-  Sistema de consulta e validação acadêmica.
+  Sistema de consulta e validação de diplomas.
 </footer>
 
 <script>
@@ -313,112 +448,130 @@ const SUPABASE_KEY = "sb_publishable_Vz8dWvlsFTVTUWPjJkjsMg_iizsxDJI";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const campos = {
-  codigo:"codigo",
-  nome:"nome_aluno",
-  nacionalidade:"nacionalidade",
-  naturalidade:"naturalidade",
-  ingresso:"data_ingresso",
-  numero:"numero",
-  emissao:"data_emissao",
-  conclusao:"data_conclusao",
-  registro:"numero_registro",
-  dataregistro:"data_registro",
-  curso:"curso",
-  emec_curso:"codigo_emec_curso",
-  habilitacao:"habilitacao",
-  titulo:"titulo_conferido",
-  grau:"grau",
-  endcurso:"endereco_curso",
-  polo:"polo",
-  autorizacao:"ato_autorizacao",
-  reconhecimento:"ato_reconhecimento",
-  renovacao:"ato_renovacao",
-  instituicao:"instituicao",
-  emec_inst:"codigo_emec_instituicao",
-  cnpj_inst:"cnpj_instituicao",
-  end_inst:"endereco_instituicao",
-  credenciamento:"ato_credenciamento",
-  recredenciamento:"ato_recredenciamento",
-  mantenedora:"mantenedora",
-  registradora:"instituicao_registradora",
-  emec_reg:"codigo_emec_registradora",
-  cnpj_reg:"cnpj_registradora",
-  end_reg:"endereco_registradora"
+  codigo: "codigo",
+  nome: "nome_aluno",
+  nacionalidade: "nacionalidade",
+  naturalidade: "naturalidade",
+  ingresso: "data_ingresso",
+  numero: "numero",
+  emissao: "data_emissao",
+  conclusao: "data_conclusao",
+  registro: "numero_registro",
+  dataregistro: "data_registro",
+  curso: "curso",
+  emec_curso: "codigo_emec_curso",
+  habilitacao: "habilitacao",
+  titulo: "titulo_conferido",
+  grau: "grau",
+  endcurso: "endereco_curso",
+  polo: "polo",
+  autorizacao: "ato_autorizacao",
+  reconhecimento: "ato_reconhecimento",
+  renovacao: "ato_renovacao",
+  instituicao: "instituicao",
+  emec_inst: "codigo_emec_instituicao",
+  cnpj_inst: "cnpj_instituicao",
+  end_inst: "endereco_instituicao",
+  credenciamento: "ato_credenciamento",
+  recredenciamento: "ato_recredenciamento",
+  mantenedora: "mantenedora",
+  registradora: "instituicao_registradora",
+  emec_reg: "codigo_emec_registradora",
+  cnpj_reg: "cnpj_registradora",
+  end_reg: "endereco_registradora"
 };
 
-function formatar(valor){
-  if(!valor) return "Não informado";
+function formatar(valor) {
+  if (valor === null || valor === undefined || valor === "") {
+    return "Não informado";
+  }
+
   const texto = String(valor);
-  if(/^\d{4}-\d{2}-\d{2}$/.test(texto)){
-    const [ano,mes,dia] = texto.split("-");
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+    const [ano, mes, dia] = texto.split("-");
     return `${dia}/${mes}/${ano}`;
   }
+
   return texto;
 }
 
-function mostrarDiploma(d){
-  document.getElementById("r_codigo").textContent = formatar(d.codigo);
-
-  for(const [id, propriedade] of Object.entries(campos)){
+function mostrarDiploma(diploma) {
+  for (const [id, propriedade] of Object.entries(campos)) {
     const elemento = document.getElementById("r_" + id);
-    if(elemento) elemento.textContent = formatar(d[propriedade]);
+
+    if (elemento) {
+      elemento.textContent = formatar(diploma[propriedade]);
+    }
   }
 
   document.getElementById("resultado").style.display = "block";
-  document.getElementById("mensagem").textContent = "";
+  document.getElementById("mensagem").style.display = "none";
 }
 
-async function consultar(codigo){
+async function consultarDiploma(codigo) {
   const mensagem = document.getElementById("mensagem");
   const botao = document.getElementById("btnBuscar");
-  const resultado = document.getElementById("resultado");
 
-  resultado.style.display = "none";
-  mensagem.textContent = "Consultando registro...";
+  document.getElementById("resultado").style.display = "none";
+  mensagem.style.display = "block";
+  mensagem.textContent = "Consultando diploma...";
   botao.disabled = true;
 
-  try{
-    const {data,error} = await db.rpc("consultar_diploma", {
+  try {
+    const { data, error } = await db.rpc("consultar_diploma", {
       p_codigo: codigo.trim()
     });
 
-    if(error) throw error;
+    if (error) throw error;
 
-    if(!data || data.length === 0){
-      mensagem.innerHTML = '<div class="erro">Nenhum diploma válido foi encontrado para esse código. Confira os dados e tente novamente.</div>';
+    if (!data || data.length === 0) {
+      mensagem.innerHTML =
+        '<div class="erro">Diploma não encontrado ou sem status válido. Confira o código informado.</div>';
       return;
     }
 
     mostrarDiploma(data[0]);
 
-  }catch(erro){
-    console.error(erro);
-    mensagem.innerHTML = '<div class="erro">Não foi possível realizar a consulta agora. Tente novamente em alguns instantes.</div>';
-  }finally{
+  } catch (erro) {
+    console.error("Erro na consulta:", erro);
+    mensagem.innerHTML =
+      '<div class="erro">Não foi possível consultar o diploma. Tente novamente.</div>';
+  } finally {
     botao.disabled = false;
   }
 }
 
-document.getElementById("formBusca").addEventListener("submit", function(event){
+document.getElementById("formBusca").addEventListener("submit", function(event) {
   event.preventDefault();
+
   const codigo = document.getElementById("codigo").value.trim();
-  if(codigo) consultar(codigo);
+
+  if (codigo) {
+    consultarDiploma(codigo);
+  }
 });
 
-// Permite preencher automaticamente o código vindo de ?codigo=...
-// ou do último trecho do endereço, quando a hospedagem permitir a rota.
-const parametros = new URLSearchParams(window.location.search);
-const codigoURL = parametros.get("codigo");
-const partes = window.location.pathname.split("/").filter(Boolean);
-const codigoCaminho = partes.length >= 2 && partes[partes.length - 2] === "validar"
-  ? partes[partes.length - 1]
-  : null;
+// Consulta automática pelo link individual:
+// https://diplomas-b3.vercel.app/validar/CODIGO
+// Também aceita ?codigo=CODIGO
 
-const codigoInicial = codigoURL || codigoCaminho;
-if(codigoInicial){
+const parametros = new URLSearchParams(window.location.search);
+const codigoPorParametro = parametros.get("codigo");
+
+const partes = window.location.pathname.split("/").filter(Boolean);
+const codigoPorCaminho =
+  partes.length >= 2 && partes[partes.length - 2] === "validar"
+    ? decodeURIComponent(partes[partes.length - 1])
+    : null;
+
+const codigoInicial = codigoPorParametro || codigoPorCaminho;
+
+if (codigoInicial) {
   document.getElementById("codigo").value = codigoInicial;
-  consultar(codigoInicial);
+  consultarDiploma(codigoInicial);
 }
 </script>
+
 </body>
 </html>
