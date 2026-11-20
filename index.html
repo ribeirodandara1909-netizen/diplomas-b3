@@ -5,321 +5,420 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Diplomas B3 | Validação de Diplomas</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
-  --blue:#163b68;
-  --blue2:#245b91;
-  --yellow:#f4c542;
-  --green:#16834b;
-  --bg:#f4f6fa;
-  --text:#253247;
-  --muted:#748094;
-  --line:#e5eaf0;
+  --petroleo:#123E43;
+  --petroleo2:#1B5558;
+  --verde:#237B63;
+  --cobre:#C99B6B;
+  --fundo:#F2F4F1;
+  --branco:#FFFFFF;
+  --texto:#26383B;
+  --suave:#718083;
+  --borda:#E2E8E4;
+  --verde-claro:#E8F4ED;
 }
 *{box-sizing:border-box}
 body{
-  margin:0;background:var(--bg);color:var(--text);
-  font-family:Inter,Arial,sans-serif;
+  margin:0;
+  background:var(--fundo);
+  color:var(--texto);
+  font-family:'DM Sans',sans-serif;
 }
-header{
-  background:#fff;border-bottom:1px solid var(--line);
-  padding:17px 6%;display:flex;align-items:center;
-  justify-content:space-between;gap:15px;
+.topo{
+  background:var(--petroleo);
+  color:white;
+  padding:22px 20px;
+  border-bottom:4px solid var(--cobre);
 }
-.brand{display:flex;align-items:center;gap:11px}
+.topo-interno{
+  max-width:1120px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+.marca{display:flex;align-items:center;gap:12px}
 .logo{
-  width:43px;height:43px;border-radius:12px;
-  background:var(--blue);display:grid;place-items:center;
-  color:var(--yellow);font-size:23px;font-weight:800;
+  width:43px;height:43px;
+  border:1px solid var(--cobre);
+  border-radius:12px;
+  display:grid;place-items:center;
+  color:var(--cobre);
+  font-weight:800;font-size:18px;
 }
-.brand-name{font-size:21px;font-weight:800;color:var(--blue)}
-.brand-sub{font-size:10px;color:var(--muted);margin-top:3px}
-.header-tag{font-size:12px;color:var(--muted)}
-main{max-width:1050px;margin:35px auto;padding:0 17px}
-.hero{text-align:center;margin-bottom:27px}
-.hero h1{font-size:27px;color:var(--blue);margin:0 0 9px}
-.hero p{color:var(--muted);font-size:14px;line-height:1.6}
-.search-card,.result-card{
-  background:#fff;border:1px solid var(--line);
-  border-radius:15px;padding:23px;margin-bottom:22px;
-  box-shadow:0 5px 20px #1c35500a;
+.marca h1{font-size:21px;margin:0;font-weight:800;letter-spacing:1px}
+.marca span{display:block;font-size:10px;letter-spacing:2px;color:#D4DEDA;margin-top:3px}
+.topo-tag{font-size:12px;color:#D4DEDA}
+main{max-width:1120px;margin:42px auto;padding:0 18px}
+.intro{text-align:center;margin-bottom:30px}
+.selo-topo{
+  display:inline-block;
+  color:var(--verde);
+  background:var(--verde-claro);
+  padding:7px 14px;
+  border-radius:30px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.2px;
 }
-.search-card label{font-size:13px;font-weight:700;display:block;margin-bottom:10px}
-.search-row{display:flex;gap:9px}
-input{
-  flex:1;min-width:0;padding:14px;border:1px solid #dce3eb;
-  border-radius:9px;font-size:14px;outline:none;
+.intro h2{
+  font-family:'Playfair Display',serif;
+  font-size:34px;
+  color:var(--petroleo);
+  margin:15px 0 8px;
 }
-input:focus{border-color:var(--blue2)}
-button{
-  border:0;border-radius:9px;background:var(--blue);
-  color:white;padding:0 22px;font-weight:700;cursor:pointer;
-  font-size:13px;min-height:46px;
+.intro p{color:var(--suave);font-size:14px;margin:0}
+.busca{
+  max-width:760px;
+  margin:0 auto 30px;
+  background:white;
+  padding:12px;
+  border-radius:16px;
+  box-shadow:0 8px 28px #173d4310;
+  display:flex;
+  gap:10px;
+  border:1px solid var(--borda);
 }
-button:disabled{opacity:.6;cursor:wait}
-#message{font-size:13px;margin-top:13px;color:var(--muted)}
-.hidden{display:none!important}
-.status-line{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  border-bottom:1px solid var(--line);padding-bottom:20px;
+.busca input{
+  flex:1;min-width:0;border:0;outline:0;
+  padding:13px 14px;font:inherit;font-size:15px;
+  color:var(--texto);
 }
-.valid{
-  background:#e8f7ee;color:var(--green);padding:9px 13px;
-  border-radius:30px;font-size:13px;font-weight:800;
+.busca button{
+  border:0;border-radius:11px;
+  background:var(--petroleo);
+  color:white;padding:0 25px;
+  font:inherit;font-weight:700;
+  cursor:pointer;
 }
-.code{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
-.result-title{font-size:21px;font-weight:800;color:var(--blue);margin:22px 0 6px}
-.result-sub{font-size:13px;color:var(--muted);margin-bottom:22px}
-.section{margin-top:25px}
-.section h2{
-  color:var(--blue);font-size:15px;padding-bottom:12px;
-  border-bottom:1px solid var(--line);margin-bottom:15px;
+.busca button:hover{background:var(--petroleo2)}
+#mensagem{
+  max-width:760px;margin:0 auto 20px;
+  text-align:center;color:var(--suave);font-size:14px;
 }
-.fields{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px 25px;
+.resultado{display:none}
+.painel{
+  background:white;border:1px solid var(--borda);
+  border-radius:17px;margin-bottom:18px;
+  overflow:hidden;box-shadow:0 5px 22px #173d4308;
 }
-.field{min-width:0}
-.field small{
-  display:block;color:var(--muted);font-size:11px;
-  margin-bottom:5px;
+.status{
+  background:var(--verde-claro);
+  padding:22px 25px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:15px;flex-wrap:wrap;
+  border-bottom:1px solid #D6E9DC;
 }
-.field strong{
-  display:block;font-size:13px;font-weight:600;
-  overflow-wrap:anywhere;line-height:1.5;
+.status-esquerda{display:flex;align-items:center;gap:13px}
+.status-icone{
+  width:43px;height:43px;border-radius:50%;
+  background:var(--verde);color:white;
+  display:grid;place-items:center;font-size:22px;
 }
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
-.actions button{min-height:42px}
-.secondary{background:#edf2f7;color:var(--blue)}
-.empty{color:#9aa4b2;font-weight:400!important}
-footer{
-  text-align:center;padding:28px 15px;color:var(--muted);
-  font-size:11px;line-height:1.7;
+.status strong{display:block;color:#176044;font-size:16px;letter-spacing:.5px}
+.status small{color:#547568;font-size:12px}
+.codigo{
+  background:white;border:1px solid #D6E9DC;
+  border-radius:9px;padding:9px 13px;
+  font-size:12px;color:var(--petroleo);
+}
+.acoes{padding:18px 22px;display:flex;gap:10px;flex-wrap:wrap}
+.acao{
+  border:1px solid var(--borda);
+  padding:12px 16px;border-radius:9px;
+  font:inherit;font-size:13px;font-weight:700;
+  background:#F8FAF8;color:var(--suave);
+  cursor:not-allowed;
+}
+.acao.principal{background:var(--petroleo);color:white;border-color:var(--petroleo)}
+.acao:disabled{opacity:.65}
+.secao{padding:22px 25px}
+.secao + .secao{border-top:1px solid var(--borda)}
+.secao-titulo{
+  display:flex;align-items:center;gap:10px;
+  color:var(--petroleo);font-weight:800;
+  font-size:15px;margin:0 0 19px;
+}
+.secao-titulo:before{
+  content:"";width:4px;height:21px;
+  border-radius:5px;background:var(--cobre);
+}
+.grade{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:20px 30px;
+}
+.campo small{
+  display:block;color:#899596;font-size:10px;
+  font-weight:800;text-transform:uppercase;
+  letter-spacing:.8px;margin-bottom:6px;
+}
+.campo div{font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.rodape{
+  text-align:center;padding:28px 15px 35px;
+  color:#899596;font-size:11px;
+}
+.rodape strong{color:var(--petroleo)}
+.erro{
+  background:#FFF0EF;color:#A13C35;
+  border:1px solid #F0D0CC;padding:15px;
+  border-radius:10px;
 }
 @media(max-width:600px){
-  header{padding:14px 17px}
-  .header-tag{display:none}
-  main{margin-top:25px}
-  .hero h1{font-size:22px}
-  .search-card,.result-card{padding:17px}
-  .search-row{flex-direction:column}
-  .search-row button{width:100%}
-  .fields{grid-template-columns:1fr;gap:14px}
-  .result-title{font-size:19px}
+  main{margin:28px auto;padding:0 12px}
+  .topo{padding:17px 14px}
+  .topo-tag{display:none}
+  .intro h2{font-size:27px}
+  .busca{padding:8px;gap:5px}
+  .busca input{padding:12px 8px;font-size:13px}
+  .busca button{padding:0 15px;font-size:13px}
+  .status{padding:18px}
+  .secao{padding:20px 17px}
+  .grade{grid-template-columns:1fr;gap:17px}
+  .acoes{padding:15px}
+  .acao{width:100%}
 }
 </style>
 </head>
 
 <body>
-<header>
-  <div class="brand">
-    <div class="logo">B3</div>
-    <div>
-      <div class="brand-name">Diplomas B3</div>
-      <div class="brand-sub">AUTENTICIDADE QUE GERA CONFIANÇA</div>
+<header class="topo">
+  <div class="topo-interno">
+    <div class="marca">
+      <div class="logo">B3</div>
+      <div>
+        <h1>DIPLOMAS B3</h1>
+        <span>VALIDAÇÃO ACADÊMICA</span>
+      </div>
     </div>
+    <div class="topo-tag">Sistema de consulta e validação</div>
   </div>
-  <div class="header-tag">Sistema de validação de diplomas</div>
 </header>
 
 <main>
-  <div class="hero">
-    <h1>Validação de Diploma</h1>
-    <p>Consulte a autenticidade de um diploma emitido e registrado no sistema Diplomas B3.</p>
-  </div>
-
-  <section class="search-card">
-    <label for="codigo">Validação por código</label>
-    <div class="search-row">
-      <input id="codigo" type="text" placeholder="Digite o código de validação" autocomplete="off">
-      <button id="searchBtn" onclick="consultar()">Consultar diploma</button>
-    </div>
-    <div id="message" role="status"></div>
+  <section class="intro">
+    <span class="selo-topo">PORTAL DE VALIDAÇÃO</span>
+    <h2>Valide seu diploma</h2>
+    <p>Consulte a autenticidade das informações do documento acadêmico.</p>
   </section>
 
-  <section id="resultado" class="result-card hidden">
-    <div class="status-line">
-      <span class="valid">✓ Diploma válido</span>
-      <span class="code">Código: <strong id="r_codigo"></strong></span>
-    </div>
+  <form class="busca" id="formBusca">
+    <input id="codigo" type="text" placeholder="Digite o código de validação" autocomplete="off" required>
+    <button type="submit" id="btnBuscar">⌕ Consultar</button>
+  </form>
 
-    <div class="result-title">Dados públicos do diploma</div>
-    <div class="result-sub">Informações disponibilizadas para conferência da autenticidade.</div>
+  <div id="mensagem">Informe o código apresentado no diploma para realizar a consulta.</div>
 
-    <div class="section">
-      <h2>Diplomado</h2>
-      <div class="fields">
-        <div class="field"><small>Nome completo</small><strong id="r_nome"></strong></div>
-        <div class="field"><small>Nacionalidade</small><strong id="r_nacionalidade"></strong></div>
-        <div class="field"><small>Naturalidade</small><strong id="r_naturalidade"></strong></div>
-        <div class="field"><small>Data de ingresso</small><strong id="r_ingresso"></strong></div>
+  <section class="resultado" id="resultado">
+    <div class="painel">
+      <div class="status">
+        <div class="status-esquerda">
+          <div class="status-icone">✓</div>
+          <div>
+            <strong>DIPLOMA VÁLIDO</strong>
+            <small>Registro localizado e com status válido no sistema.</small>
+          </div>
+        </div>
+        <div class="codigo">CÓDIGO: <strong id="r_codigo"></strong></div>
+      </div>
+
+      <div class="acoes">
+        <button class="acao principal" disabled title="Acesso seguro ao PDF ainda em configuração">
+          ↓ Baixar representação visual — em configuração
+        </button>
+        <button class="acao" disabled title="Assinatura digital ainda não configurada">
+          ↓ XML assinado — em configuração
+        </button>
       </div>
     </div>
 
-    <div class="section">
-      <h2>Dados do diploma</h2>
-      <div class="fields">
-        <div class="field"><small>Número do diploma</small><strong id="r_numero"></strong></div>
-        <div class="field"><small>Data de emissão</small><strong id="r_emissao"></strong></div>
-        <div class="field"><small>Data de conclusão</small><strong id="r_conclusao"></strong></div>
-        <div class="field"><small>Número de registro</small><strong id="r_registro"></strong></div>
-        <div class="field"><small>Data do registro</small><strong id="r_dataregistro"></strong></div>
-      </div>
-    </div>
+    <div class="painel">
+      <section class="secao">
+        <h3 class="secao-titulo">Dados do diplomado</h3>
+        <div class="grade">
+          <div class="campo"><small>Nome completo</small><div id="r_nome"></div></div>
+          <div class="campo"><small>Nacionalidade</small><div id="r_nacionalidade"></div></div>
+          <div class="campo"><small>Naturalidade</small><div id="r_naturalidade"></div></div>
+          <div class="campo"><small>Data de ingresso</small><div id="r_ingresso"></div></div>
+        </div>
+      </section>
 
-    <div class="section">
-      <h2>Dados do curso</h2>
-      <div class="fields">
-        <div class="field"><small>Curso</small><strong id="r_curso"></strong></div>
-        <div class="field"><small>Código e-MEC</small><strong id="r_emec_curso"></strong></div>
-        <div class="field"><small>Habilitação</small><strong id="r_habilitacao"></strong></div>
-        <div class="field"><small>Título conferido</small><strong id="r_titulo"></strong></div>
-        <div class="field"><small>Grau</small><strong id="r_grau"></strong></div>
-        <div class="field"><small>Endereço do curso</small><strong id="r_endereco_curso"></strong></div>
-        <div class="field"><small>Polo</small><strong id="r_polo"></strong></div>
-        <div class="field"><small>Ato de autorização</small><strong id="r_autorizacao"></strong></div>
-        <div class="field"><small>Ato de reconhecimento</small><strong id="r_reconhecimento"></strong></div>
-        <div class="field"><small>Renovação de reconhecimento</small><strong id="r_renovacao"></strong></div>
-      </div>
-    </div>
+      <section class="secao">
+        <h3 class="secao-titulo">Dados do diploma</h3>
+        <div class="grade">
+          <div class="campo"><small>Número do diploma</small><div id="r_numero"></div></div>
+          <div class="campo"><small>Data de emissão</small><div id="r_emissao"></div></div>
+          <div class="campo"><small>Data de conclusão</small><div id="r_conclusao"></div></div>
+          <div class="campo"><small>Número de registro</small><div id="r_registro"></div></div>
+          <div class="campo"><small>Data de registro</small><div id="r_dataregistro"></div></div>
+        </div>
+      </section>
 
-    <div class="section">
-      <h2>Instituição emissora</h2>
-      <div class="fields">
-        <div class="field"><small>Instituição</small><strong id="r_instituicao"></strong></div>
-        <div class="field"><small>Código e-MEC</small><strong id="r_emec_inst"></strong></div>
-        <div class="field"><small>CNPJ</small><strong id="r_cnpj_inst"></strong></div>
-        <div class="field"><small>Endereço</small><strong id="r_endereco_inst"></strong></div>
-        <div class="field"><small>Ato de credenciamento</small><strong id="r_credenciamento"></strong></div>
-        <div class="field"><small>Ato de recredenciamento</small><strong id="r_recredenciamento"></strong></div>
-        <div class="field"><small>Mantenedora</small><strong id="r_mantenedora"></strong></div>
-      </div>
-    </div>
+      <section class="secao">
+        <h3 class="secao-titulo">Dados do curso</h3>
+        <div class="grade">
+          <div class="campo"><small>Curso</small><div id="r_curso"></div></div>
+          <div class="campo"><small>Código e-MEC do curso</small><div id="r_emec_curso"></div></div>
+          <div class="campo"><small>Habilitação</small><div id="r_habilitacao"></div></div>
+          <div class="campo"><small>Título conferido</small><div id="r_titulo"></div></div>
+          <div class="campo"><small>Grau</small><div id="r_grau"></div></div>
+          <div class="campo"><small>Endereço do curso</small><div id="r_endcurso"></div></div>
+          <div class="campo"><small>Polo</small><div id="r_polo"></div></div>
+          <div class="campo"><small>Ato de autorização</small><div id="r_autorizacao"></div></div>
+          <div class="campo"><small>Ato de reconhecimento</small><div id="r_reconhecimento"></div></div>
+          <div class="campo"><small>Ato de renovação</small><div id="r_renovacao"></div></div>
+        </div>
+      </section>
 
-    <div class="section">
-      <h2>Instituição registradora</h2>
-      <div class="fields">
-        <div class="field"><small>Instituição</small><strong id="r_registradora"></strong></div>
-        <div class="field"><small>Código e-MEC</small><strong id="r_emec_reg"></strong></div>
-        <div class="field"><small>CNPJ</small><strong id="r_cnpj_reg"></strong></div>
-        <div class="field"><small>Endereço</small><strong id="r_endereco_reg"></strong></div>
-      </div>
-    </div>
+      <section class="secao">
+        <h3 class="secao-titulo">Instituição emissora</h3>
+        <div class="grade">
+          <div class="campo"><small>Instituição</small><div id="r_instituicao"></div></div>
+          <div class="campo"><small>Código e-MEC</small><div id="r_emec_inst"></div></div>
+          <div class="campo"><small>CNPJ</small><div id="r_cnpj_inst"></div></div>
+          <div class="campo"><small>Endereço</small><div id="r_end_inst"></div></div>
+          <div class="campo"><small>Ato de credenciamento</small><div id="r_credenciamento"></div></div>
+          <div class="campo"><small>Ato de recredenciamento</small><div id="r_recredenciamento"></div></div>
+          <div class="campo"><small>Mantenedora</small><div id="r_mantenedora"></div></div>
+        </div>
+      </section>
 
-    <div class="actions">
-      <button class="secondary" onclick="window.print()">Imprimir / Salvar representação</button>
+      <section class="secao">
+        <h3 class="secao-titulo">Instituição registradora</h3>
+        <div class="grade">
+          <div class="campo"><small>Instituição registradora</small><div id="r_registradora"></div></div>
+          <div class="campo"><small>Código e-MEC</small><div id="r_emec_reg"></div></div>
+          <div class="campo"><small>CNPJ</small><div id="r_cnpj_reg"></div></div>
+          <div class="campo"><small>Endereço</small><div id="r_end_reg"></div></div>
+        </div>
+      </section>
     </div>
   </section>
 </main>
 
-<footer>
-  Diplomas B3 — Sistema de consulta e validação de diplomas.<br>
-  A consulta apresenta os dados públicos cadastrados pela instituição emissora.
+<footer class="rodape">
+  <strong>DIPLOMAS B3</strong><br>
+  Sistema de consulta e validação acadêmica.
 </footer>
 
 <script>
 const SUPABASE_URL = "https://csbwjtfudvuzscodbrid.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Vz8dWvlsFTVTUWPjJkjsMg_iizsxDJI";
+
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-function texto(valor) {
-  return valor === null || valor === undefined || String(valor).trim() === ""
-    ? "Não informado"
-    : String(valor);
+const campos = {
+  codigo:"codigo",
+  nome:"nome_aluno",
+  nacionalidade:"nacionalidade",
+  naturalidade:"naturalidade",
+  ingresso:"data_ingresso",
+  numero:"numero",
+  emissao:"data_emissao",
+  conclusao:"data_conclusao",
+  registro:"numero_registro",
+  dataregistro:"data_registro",
+  curso:"curso",
+  emec_curso:"codigo_emec_curso",
+  habilitacao:"habilitacao",
+  titulo:"titulo_conferido",
+  grau:"grau",
+  endcurso:"endereco_curso",
+  polo:"polo",
+  autorizacao:"ato_autorizacao",
+  reconhecimento:"ato_reconhecimento",
+  renovacao:"ato_renovacao",
+  instituicao:"instituicao",
+  emec_inst:"codigo_emec_instituicao",
+  cnpj_inst:"cnpj_instituicao",
+  end_inst:"endereco_instituicao",
+  credenciamento:"ato_credenciamento",
+  recredenciamento:"ato_recredenciamento",
+  mantenedora:"mantenedora",
+  registradora:"instituicao_registradora",
+  emec_reg:"codigo_emec_registradora",
+  cnpj_reg:"cnpj_registradora",
+  end_reg:"endereco_registradora"
+};
+
+function formatar(valor){
+  if(!valor) return "Não informado";
+  const texto = String(valor);
+  if(/^\d{4}-\d{2}-\d{2}$/.test(texto)){
+    const [ano,mes,dia] = texto.split("-");
+    return `${dia}/${mes}/${ano}`;
+  }
+  return texto;
 }
 
-function dataBR(valor) {
-  if (!valor) return "Não informado";
-  const partes = String(valor).split("-");
-  if (partes.length !== 3) return texto(valor);
-  return `${partes[2]}/${partes[1]}/${partes[0]}`;
-}
+function mostrarDiploma(d){
+  document.getElementById("r_codigo").textContent = formatar(d.codigo);
 
-function preencher(id, valor, data = false) {
-  document.getElementById(id).textContent =
-    data ? dataBR(valor) : texto(valor);
-}
-
-async function consultar() {
-  const codigo = document.getElementById("codigo").value.trim();
-  const mensagem = document.getElementById("message");
-  const botao = document.getElementById("searchBtn");
-  const resultado = document.getElementById("resultado");
-
-  resultado.classList.add("hidden");
-
-  if (!codigo) {
-    mensagem.textContent = "Digite o código de validação.";
-    return;
+  for(const [id, propriedade] of Object.entries(campos)){
+    const elemento = document.getElementById("r_" + id);
+    if(elemento) elemento.textContent = formatar(d[propriedade]);
   }
 
-  botao.disabled = true;
-  mensagem.textContent = "Consultando diploma...";
+  document.getElementById("resultado").style.display = "block";
+  document.getElementById("mensagem").textContent = "";
+}
 
-  try {
-    const { data, error } = await db.rpc("consultar_diploma", {
-      p_codigo: codigo
+async function consultar(codigo){
+  const mensagem = document.getElementById("mensagem");
+  const botao = document.getElementById("btnBuscar");
+  const resultado = document.getElementById("resultado");
+
+  resultado.style.display = "none";
+  mensagem.textContent = "Consultando registro...";
+  botao.disabled = true;
+
+  try{
+    const {data,error} = await db.rpc("consultar_diploma", {
+      p_codigo: codigo.trim()
     });
 
-    if (error) throw error;
+    if(error) throw error;
 
-    if (!data || data.length === 0) {
-      mensagem.textContent = "Nenhum diploma válido foi encontrado com esse código.";
+    if(!data || data.length === 0){
+      mensagem.innerHTML = '<div class="erro">Nenhum diploma válido foi encontrado para esse código. Confira os dados e tente novamente.</div>';
       return;
     }
 
-    const d = data[0];
+    mostrarDiploma(data[0]);
 
-    preencher("r_codigo", d.codigo);
-    preencher("r_nome", d.nome_aluno);
-    preencher("r_nacionalidade", d.nacionalidade);
-    preencher("r_naturalidade", d.naturalidade);
-    preencher("r_ingresso", d.data_ingresso, true);
-    preencher("r_numero", d.numero);
-    preencher("r_emissao", d.data_emissao, true);
-    preencher("r_conclusao", d.data_conclusao, true);
-    preencher("r_registro", d.numero_registro);
-    preencher("r_dataregistro", d.data_registro, true);
-    preencher("r_curso", d.curso);
-    preencher("r_emec_curso", d.codigo_emec_curso);
-    preencher("r_habilitacao", d.habilitacao);
-    preencher("r_titulo", d.titulo_conferido);
-    preencher("r_grau", d.grau);
-    preencher("r_endereco_curso", d.endereco_curso);
-    preencher("r_polo", d.polo);
-    preencher("r_autorizacao", d.ato_autorizacao);
-    preencher("r_reconhecimento", d.ato_reconhecimento);
-    preencher("r_renovacao", d.ato_renovacao);
-    preencher("r_instituicao", d.instituicao);
-    preencher("r_emec_inst", d.codigo_emec_instituicao);
-    preencher("r_cnpj_inst", d.cnpj_instituicao);
-    preencher("r_endereco_inst", d.endereco_instituicao);
-    preencher("r_credenciamento", d.ato_credenciamento);
-    preencher("r_recredenciamento", d.ato_recredenciamento);
-    preencher("r_mantenedora", d.mantenedora);
-    preencher("r_registradora", d.instituicao_registradora);
-    preencher("r_emec_reg", d.codigo_emec_registradora);
-    preencher("r_cnpj_reg", d.cnpj_registradora);
-    preencher("r_endereco_reg", d.endereco_registradora);
-
-    mensagem.textContent = "Diploma localizado.";
-    resultado.classList.remove("hidden");
-    resultado.scrollIntoView({ behavior: "smooth", block: "start" });
-
-  } catch (erro) {
+  }catch(erro){
     console.error(erro);
-    mensagem.textContent = "Não foi possível consultar. Verifique a conexão e tente novamente.";
-  } finally {
+    mensagem.innerHTML = '<div class="erro">Não foi possível realizar a consulta agora. Tente novamente em alguns instantes.</div>';
+  }finally{
     botao.disabled = false;
   }
 }
 
-document.getElementById("codigo").addEventListener("keydown", function(event) {
-  if (event.key === "Enter") consultar();
+document.getElementById("formBusca").addEventListener("submit", function(event){
+  event.preventDefault();
+  const codigo = document.getElementById("codigo").value.trim();
+  if(codigo) consultar(codigo);
 });
+
+// Permite preencher automaticamente o código vindo de ?codigo=...
+// ou do último trecho do endereço, quando a hospedagem permitir a rota.
+const parametros = new URLSearchParams(window.location.search);
+const codigoURL = parametros.get("codigo");
+const partes = window.location.pathname.split("/").filter(Boolean);
+const codigoCaminho = partes.length >= 2 && partes[partes.length - 2] === "validar"
+  ? partes[partes.length - 1]
+  : null;
+
+const codigoInicial = codigoURL || codigoCaminho;
+if(codigoInicial){
+  document.getElementById("codigo").value = codigoInicial;
+  consultar(codigoInicial);
+}
 </script>
 </body>
 </html>
-
