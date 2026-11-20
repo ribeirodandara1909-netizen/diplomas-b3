@@ -5,282 +5,505 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Administração | Diplomas B3</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,sans-serif;background:#f3f6fb;color:#183456}
-header{background:#103d75;color:white;padding:22px 6%;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:23px;font-weight:800}
-.logo span{color:#68c1ff}
-header small{display:block;color:#d4e7fa;font-size:11px;margin-top:5px}
-main{max-width:850px;margin:40px auto;padding:0 16px}
-.card{background:white;padding:30px;border-radius:14px;box-shadow:0 8px 30px #16385d12;margin-bottom:22px}
-h2{color:#123e76;margin-bottom:10px;font-size:22px}
-.sub{font-size:13px;color:#718198;margin-bottom:22px;line-height:1.6}
-label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
-input{width:100%;padding:13px;border:1px solid #d9e2ed;border-radius:8px;font-size:14px;background:#fcfdff}
-input:focus{outline:2px solid #b8dcff;border-color:#2584d0}
-button{border:0;border-radius:8px;padding:14px 18px;background:#1269b5;color:white;font-weight:700;font-size:14px;cursor:pointer}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fa;color:#26364a;font-family:Inter,Arial,sans-serif}
+header{background:#173d68;color:white;padding:20px}
+.header-inner{max-width:1000px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:21px;font-weight:800}
+.brand small{display:block;font-size:10px;font-weight:500;color:#d4dfeb;margin-top:4px}
+main{max-width:1000px;margin:30px auto;padding:0 15px}
+.card{background:white;border:1px solid #e3e9f0;border-radius:14px;padding:23px;margin-bottom:20px}
+h1{font-size:23px;color:#173d68;margin:0 0 8px}
+h2{font-size:16px;color:#173d68;margin:0 0 17px;padding-bottom:12px;border-bottom:1px solid #e7ebf0}
+p{font-size:13px;color:#748196;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+label{display:block;font-size:12px;font-weight:700;margin-bottom:7px}
+input{width:100%;padding:12px;border:1px solid #dce3eb;border-radius:8px;font:14px Inter,Arial;outline:none;background:white}
+input:focus{border-color:#245b91}
+button{border:0;border-radius:8px;padding:13px 18px;background:#173d68;color:white;font-weight:700;font-size:13px;cursor:pointer}
 button:disabled{opacity:.6;cursor:wait}
-button:hover{background:#0b4f91}
-.secondary{background:#e8f1fb;color:#174b80}
-.secondary:hover{background:#d7e8fa}
-.full{width:100%;margin-top:20px}
+.secondary{background:#eaf0f6;color:#173d68}
+.danger{background:#8d3333}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
 .hidden{display:none!important}
-.message{padding:14px;border-radius:8px;margin-top:16px;font-size:13px;line-height:1.6}
-.success{background:#e9f8ef;color:#176b38}
-.error{background:#fff0f0;color:#a42b2b}
-.codebox{background:#edf5ff;padding:16px;border-radius:9px;margin-top:15px;overflow-wrap:anywhere}
-.codebox strong{display:block;color:#174b80;margin-bottom:6px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
-.topline h2{margin:0}
-.hint{font-size:11px;color:#75869b;margin-top:7px}
-footer{text-align:center;color:#8190a4;font-size:12px;padding:25px}
-@media(max-width:600px){header{padding:18px 5%}.grid{grid-template-columns:1fr}.card{padding:22px 18px}.topline{align-items:flex-start;flex-direction:column}}
+#message{font-size:13px;margin-top:15px;line-height:1.6;overflow-wrap:anywhere}
+.success{color:#16834b}
+.error{color:#b42318}
+.codebox{background:#eef5fc;padding:15px;border-radius:9px;margin-top:15px;overflow-wrap:anywhere}
+.codebox strong{color:#173d68;font-size:18px}
+.note{font-size:11px;color:#7b8798;margin-top:7px}
+@media(max-width:600px){
+ .grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .card{padding:17px}
+ .header-inner{align-items:flex-start}
+}
 </style>
 </head>
 
 <body>
+
 <header>
-  <div>
-    <div class="logo">Diplomas <span>B3</span></div>
-    <small>Painel administrativo</small>
+ <div class="header-inner">
+  <div class="brand">
+   Diplomas B3
+   <small>PAINEL ADMINISTRATIVO</small>
   </div>
-  <button id="sair" class="secondary hidden" type="button">Sair</button>
+  <button id="logoutBtn" class="secondary hidden" onclick="sair()">Sair</button>
+ </div>
 </header>
 
 <main>
-  <section class="card" id="loginCard">
-    <h2>Acesso administrativo</h2>
-    <p class="sub">Entre com seu e-mail e senha de administrador.</p>
 
-    <form id="loginForm">
-      <label for="email">E-mail</label>
-      <input id="email" type="email" autocomplete="username" required placeholder="Seu e-mail">
+<section id="loginCard" class="card">
+ <h1>Acesso administrativo</h1>
+ <p>Entre com seu e-mail e senha cadastrados no Supabase.</p>
+ <form id="loginForm">
+  <div class="field">
+   <label for="email">E-mail</label>
+   <input id="email" type="email" required autocomplete="username">
+  </div>
+  <div class="field" style="margin-top:14px">
+   <label for="senha">Senha</label>
+   <input id="senha" type="password" required autocomplete="current-password">
+  </div>
+  <div class="actions">
+   <button id="loginBtn" type="submit">Entrar no painel</button>
+  </div>
+ </form>
+ <div id="loginMessage" role="status"></div>
+</section>
 
-      <label for="senha">Senha</label>
-      <input id="senha" type="password" autocomplete="current-password" required placeholder="Sua senha">
+<section id="adminPanel" class="hidden">
+ <div class="card">
+  <h1>Cadastro de diploma</h1>
+  <p>Preencha as informações do diploma. Os campos não aplicáveis podem ficar vazios. Os dados serão utilizados na página pública de validação.</p>
+ </div>
 
-      <button class="full" id="entrar" type="submit">Entrar no painel</button>
-    </form>
-    <div id="loginMsg" aria-live="polite"></div>
+ <form id="diplomaForm">
+
+  <section class="card">
+   <h2>1. Dados do diplomado</h2>
+   <div class="grid">
+    <div class="field full">
+     <label for="nome">Nome completo *</label>
+     <input id="nome" required>
+    </div>
+    <div class="field">
+     <label for="nacionalidade">Nacionalidade</label>
+     <input id="nacionalidade">
+    </div>
+    <div class="field">
+     <label for="naturalidade">Naturalidade</label>
+     <input id="naturalidade">
+    </div>
+    <div class="field">
+     <label for="data_ingresso">Data de ingresso</label>
+     <input id="data_ingresso" type="date">
+    </div>
+   </div>
   </section>
 
-  <section class="card hidden" id="painel">
-    <div class="topline">
-      <div>
-        <h2>Cadastrar diploma</h2>
-        <p class="sub" style="margin:7px 0 0">Preencha os dados conforme aparecem no documento.</p>
-      </div>
+  <section class="card">
+   <h2>2. Dados do diploma</h2>
+   <div class="grid">
+    <div class="field">
+     <label for="numero">Número do diploma *</label>
+     <input id="numero" required>
     </div>
-
-    <form id="cadastroForm">
-      <label for="aluno">Nome completo do aluno *</label>
-      <input id="aluno" required placeholder="Nome completo">
-
-      <div class="grid">
-        <div>
-          <label for="numero">Número do diploma *</label>
-          <input id="numero" required placeholder="Número do diploma">
-        </div>
-        <div>
-          <label for="emissao">Data de emissão *</label>
-          <input id="emissao" type="date" required>
-        </div>
-      </div>
-
-      <label for="curso">Curso *</label>
-      <input id="curso" required placeholder="Nome do curso">
-
-      <label for="instituicao">Instituição emissora *</label>
-      <input id="instituicao" required placeholder="Nome da instituição">
-
-      <label for="conclusao">Data de conclusão</label>
-      <input id="conclusao" type="date">
-
-      <label for="pdf">Arquivo do diploma em PDF *</label>
-      <input id="pdf" type="file" accept="application/pdf,.pdf" required>
-      <p class="hint">O PDF será armazenado em bucket privado.</p>
-
-      <button class="full" id="cadastrar" type="submit">Cadastrar diploma</button>
-    </form>
-
-    <div id="cadastroMsg" aria-live="polite"></div>
-    <div id="codigoGerado" class="codebox hidden">
-      <strong>Diploma cadastrado! Código de validação:</strong>
-      <span id="codigoTexto"></span>
-      <button type="button" class="secondary full" id="copiar">Copiar código</button>
+    <div class="field">
+     <label for="data_emissao">Data de emissão *</label>
+     <input id="data_emissao" type="date" required>
     </div>
+    <div class="field">
+     <label for="data_conclusao">Data de conclusão</label>
+     <input id="data_conclusao" type="date">
+    </div>
+    <div class="field">
+     <label for="numero_registro">Número de registro</label>
+     <input id="numero_registro">
+    </div>
+    <div class="field">
+     <label for="data_registro">Data do registro</label>
+     <input id="data_registro" type="date">
+    </div>
+   </div>
   </section>
+
+  <section class="card">
+   <h2>3. Dados do curso</h2>
+   <div class="grid">
+    <div class="field full">
+     <label for="curso">Nome do curso *</label>
+     <input id="curso" required>
+    </div>
+    <div class="field">
+     <label for="codigo_emec_curso">Código e-MEC do curso</label>
+     <input id="codigo_emec_curso">
+    </div>
+    <div class="field">
+     <label for="habilitacao">Habilitação</label>
+     <input id="habilitacao">
+    </div>
+    <div class="field">
+     <label for="titulo_conferido">Título conferido</label>
+     <input id="titulo_conferido">
+    </div>
+    <div class="field">
+     <label for="grau">Grau</label>
+     <input id="grau" placeholder="Ex.: Licenciatura, Bacharelado">
+    </div>
+    <div class="field full">
+     <label for="endereco_curso">Endereço do curso</label>
+     <input id="endereco_curso">
+    </div>
+    <div class="field">
+     <label for="polo">Polo</label>
+     <input id="polo">
+    </div>
+    <div class="field">
+     <label for="ato_autorizacao">Ato de autorização</label>
+     <input id="ato_autorizacao">
+    </div>
+    <div class="field">
+     <label for="ato_reconhecimento">Ato de reconhecimento</label>
+     <input id="ato_reconhecimento">
+    </div>
+    <div class="field">
+     <label for="ato_renovacao">Renovação de reconhecimento</label>
+     <input id="ato_renovacao">
+    </div>
+   </div>
+  </section>
+
+  <section class="card">
+   <h2>4. Instituição emissora</h2>
+   <div class="grid">
+    <div class="field full">
+     <label for="instituicao">Nome da instituição *</label>
+     <input id="instituicao" required>
+    </div>
+    <div class="field">
+     <label for="codigo_emec_instituicao">Código e-MEC</label>
+     <input id="codigo_emec_instituicao">
+    </div>
+    <div class="field">
+     <label for="cnpj_instituicao">CNPJ</label>
+     <input id="cnpj_instituicao">
+    </div>
+    <div class="field full">
+     <label for="endereco_instituicao">Endereço da instituição</label>
+     <input id="endereco_instituicao">
+    </div>
+    <div class="field">
+     <label for="ato_credenciamento">Ato de credenciamento</label>
+     <input id="ato_credenciamento">
+    </div>
+    <div class="field">
+     <label for="ato_recredenciamento">Ato de recredenciamento</label>
+     <input id="ato_recredenciamento">
+    </div>
+    <div class="field full">
+     <label for="mantenedora">Mantenedora</label>
+     <input id="mantenedora">
+    </div>
+   </div>
+  </section>
+
+  <section class="card">
+   <h2>5. Instituição registradora</h2>
+   <div class="grid">
+    <div class="field full">
+     <label for="instituicao_registradora">Nome da instituição registradora</label>
+     <input id="instituicao_registradora">
+    </div>
+    <div class="field">
+     <label for="codigo_emec_registradora">Código e-MEC</label>
+     <input id="codigo_emec_registradora">
+    </div>
+    <div class="field">
+     <label for="cnpj_registradora">CNPJ</label>
+     <input id="cnpj_registradora">
+    </div>
+    <div class="field full">
+     <label for="endereco_registradora">Endereço da instituição registradora</label>
+     <input id="endereco_registradora">
+    </div>
+   </div>
+  </section>
+
+  <section class="card">
+   <h2>6. Arquivo do diploma</h2>
+   <div class="field">
+    <label for="arquivo">Anexar diploma original em PDF *</label>
+    <input id="arquivo" type="file" accept="application/pdf,.pdf" required>
+    <div class="note">Somente PDF. Tamanho máximo: 15 MB.</div>
+   </div>
+  </section>
+
+  <section class="card">
+   <h2>7. Finalizar cadastro</h2>
+   <p>O código de validação será criado automaticamente após o cadastro.</p>
+   <div class="actions">
+    <button id="saveBtn" type="submit">Cadastrar diploma</button>
+    <button type="reset" class="secondary">Limpar formulário</button>
+   </div>
+   <div id="formMessage" role="status"></div>
+   <div id="createdCode" class="codebox hidden">
+    <div class="note">CÓDIGO DE VALIDAÇÃO GERADO</div>
+    <strong id="codeValue"></strong>
+    <div class="actions">
+     <button type="button" class="secondary" onclick="copiarCodigo()">Copiar código</button>
+    </div>
+    <p>Guarde este código. Ele será utilizado para consultar o diploma.</p>
+   </div>
+  </section>
+
+ </form>
+</section>
+
 </main>
-
-<footer>Diplomas B3 · Área restrita de administração</footer>
 
 <script>
 const SUPABASE_URL = "https://csbwjtfudvuzscodbrid.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Vz8dWvlsFTVTUWPjJkjsMg_iizsxDJI";
+const ADMIN_UID = "894eb49f-d134-4da8-be40-7f86e688f497";
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const loginCard = document.getElementById("loginCard");
-const painel = document.getElementById("painel");
-const sair = document.getElementById("sair");
+const adminPanel = document.getElementById("adminPanel");
+const logoutBtn = document.getElementById("logoutBtn");
 
-function mensagem(elemento, texto, tipo) {
-  elemento.innerHTML = "";
-  const div = document.createElement("div");
-  div.className = "message " + tipo;
-  div.textContent = texto;
-  elemento.appendChild(div);
-}
+function mostrarPainel(sessao) {
+  const autorizado = sessao && sessao.user && sessao.user.id === ADMIN_UID;
+  loginCard.classList.toggle("hidden", !!autorizado);
+  adminPanel.classList.toggle("hidden", !autorizado);
+  logoutBtn.classList.toggle("hidden", !autorizado);
 
-function mostrarPainel(autenticado) {
-  loginCard.classList.toggle("hidden", autenticado);
-  painel.classList.toggle("hidden", !autenticado);
-  sair.classList.toggle("hidden", !autenticado);
+  if (sessao && !autorizado) {
+    document.getElementById("loginMessage").textContent =
+      "Esta conta não tem autorização para acessar o painel administrativo.";
+  }
 }
 
 async function verificarSessao() {
   const { data, error } = await db.auth.getSession();
   if (error) {
-    mensagem(document.getElementById("loginMsg"), error.message, "error");
+    document.getElementById("loginMessage").textContent = error.message;
     return;
   }
-  mostrarPainel(!!data.session);
+  mostrarPainel(data.session);
 }
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+db.auth.onAuthStateChange((_event, session) => {
+  mostrarPainel(session);
+});
 
-  const botao = document.getElementById("entrar");
-  const msg = document.getElementById("loginMsg");
+document.getElementById("loginForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const botao = document.getElementById("loginBtn");
+  const mensagem = document.getElementById("loginMessage");
   botao.disabled = true;
-  botao.textContent = "Entrando...";
+  mensagem.textContent = "Entrando...";
 
-  const { error } = await db.auth.signInWithPassword({
-    email: document.getElementById("email").value.trim(),
-    password: document.getElementById("senha").value
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("senha").value;
+
+  const { data, error } = await db.auth.signInWithPassword({
+    email,
+    password
   });
 
+  botao.disabled = false;
+
   if (error) {
-    mensagem(msg, "Não foi possível entrar. Confira o e-mail e a senha.", "error");
-  } else {
-    msg.innerHTML = "";
-    mostrarPainel(true);
+    mensagem.className = "error";
+    mensagem.textContent = "Não foi possível entrar: " + error.message;
+    return;
   }
 
-  botao.disabled = false;
-  botao.textContent = "Entrar no painel";
+  if (data.user.id !== ADMIN_UID) {
+    await db.auth.signOut();
+    mensagem.className = "error";
+    mensagem.textContent = "Esta conta não está autorizada como administradora.";
+    return;
+  }
+
+  mensagem.className = "success";
+  mensagem.textContent = "Acesso autorizado.";
+  mostrarPainel(data.session);
 });
 
-sair.addEventListener("click", async () => {
+async function sair() {
   await db.auth.signOut();
-  mostrarPainel(false);
-  document.getElementById("loginForm").reset();
-});
-
-function gerarCodigo() {
-  const aleatorio = crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase();
-  return "B3-" + aleatorio;
+  mostrarPainel(null);
 }
 
-document.getElementById("cadastroForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+function valor(id) {
+  const v = document.getElementById(id).value.trim();
+  return v === "" ? null : v;
+}
 
-  const botao = document.getElementById("cadastrar");
-  const msg = document.getElementById("cadastroMsg");
-  const arquivo = document.getElementById("pdf").files[0];
+function gerarCodigo() {
+  const parte = crypto.randomUUID().replace(/-/g, "").substring(0, 12).toUpperCase();
+  return "B3-" + parte;
+}
 
-  msg.innerHTML = "";
-  document.getElementById("codigoGerado").classList.add("hidden");
+let ultimoCodigo = "";
 
-  if (!arquivo || arquivo.type !== "application/pdf" || !arquivo.name.toLowerCase().endsWith(".pdf")) {
-    mensagem(msg, "Selecione um arquivo PDF válido.", "error");
+function copiarCodigo() {
+  if (!ultimoCodigo) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(ultimoCodigo)
+      .then(() => alert("Código copiado!"))
+      .catch(() => alert("Não foi possível copiar automaticamente. Código: " + ultimoCodigo));
+  } else {
+    alert("Código: " + ultimoCodigo);
+  }
+}
+
+document.getElementById("diplomaForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const botao = document.getElementById("saveBtn");
+  const mensagem = document.getElementById("formMessage");
+  const arquivoInput = document.getElementById("arquivo");
+  const arquivo = arquivoInput.files[0];
+
+  mensagem.className = "";
+  document.getElementById("createdCode").classList.add("hidden");
+
+  if (!arquivo) {
+    mensagem.className = "error";
+    mensagem.textContent = "Selecione o arquivo PDF do diploma.";
+    return;
+  }
+
+  if (arquivo.type !== "application/pdf" && !arquivo.name.toLowerCase().endsWith(".pdf")) {
+    mensagem.className = "error";
+    mensagem.textContent = "O arquivo precisa estar no formato PDF.";
     return;
   }
 
   if (arquivo.size > 15 * 1024 * 1024) {
-    mensagem(msg, "O PDF deve ter no máximo 15 MB.", "error");
+    mensagem.className = "error";
+    mensagem.textContent = "O PDF ultrapassa o limite de 15 MB.";
     return;
   }
 
   botao.disabled = true;
   botao.textContent = "Cadastrando...";
-
-  let caminhoArquivo = null;
+  mensagem.textContent = "Verificando acesso...";
 
   try {
-    const { data: sessaoData, error: sessaoErro } = await db.auth.getSession();
-    if (sessaoErro || !sessaoData.session) {
-      throw new Error("Sua sessão expirou. Entre novamente.");
+    const { data: sessaoData, error: sessaoError } = await db.auth.getSession();
+
+    if (sessaoError || !sessaoData.session ||
+        sessaoData.session.user.id !== ADMIN_UID) {
+      throw new Error("Sua sessão administrativa expirou. Entre novamente.");
     }
 
     const codigo = gerarCodigo();
-    caminhoArquivo = codigo + "/" + crypto.randomUUID() + ".pdf";
+    const caminho = codigo + "/" + crypto.randomUUID() + ".pdf";
 
-    const { error: uploadErro } = await db.storage
+    mensagem.textContent = "Enviando PDF...";
+
+    const { error: uploadError } = await db.storage
       .from("diplomas")
-      .upload(caminhoArquivo, arquivo, {
+      .upload(caminho, arquivo, {
         contentType: "application/pdf",
         upsert: false
       });
 
-    if (uploadErro) throw uploadErro;
+    if (uploadError) throw uploadError;
 
     const registro = {
       codigo: codigo,
-      nome_aluno: document.getElementById("aluno").value.trim(),
-      numero: document.getElementById("numero").value.trim(),
-      data_emissao: document.getElementById("emissao").value,
-      curso: document.getElementById("curso").value.trim(),
-      instituicao: document.getElementById("instituicao").value.trim(),
-      data_conclusao: document.getElementById("conclusao").value || null,
-      arquivo_url: caminhoArquivo,
-      status: "valido"
+      nome_aluno: valor("nome"),
+      numero: valor("numero"),
+      data_emissao: valor("data_emissao"),
+      curso: valor("curso"),
+      instituicao: valor("instituicao"),
+      data_conclusao: valor("data_conclusao"),
+      arquivo_url: caminho,
+      status: "valido",
+
+      nacionalidade: valor("nacionalidade"),
+      naturalidade: valor("naturalidade"),
+      data_ingresso: valor("data_ingresso"),
+      numero_registro: valor("numero_registro"),
+      data_registro: valor("data_registro"),
+
+      codigo_emec_curso: valor("codigo_emec_curso"),
+      habilitacao: valor("habilitacao"),
+      titulo_conferido: valor("titulo_conferido"),
+      grau: valor("grau"),
+      endereco_curso: valor("endereco_curso"),
+      polo: valor("polo"),
+      ato_autorizacao: valor("ato_autorizacao"),
+      ato_reconhecimento: valor("ato_reconhecimento"),
+      ato_renovacao: valor("ato_renovacao"),
+
+      codigo_emec_instituicao: valor("codigo_emec_instituicao"),
+      cnpj_instituicao: valor("cnpj_instituicao"),
+      endereco_instituicao: valor("endereco_instituicao"),
+      ato_credenciamento: valor("ato_credenciamento"),
+      ato_recredenciamento: valor("ato_recredenciamento"),
+      mantenedora: valor("mantenedora"),
+
+      instituicao_registradora: valor("instituicao_registradora"),
+      codigo_emec_registradora: valor("codigo_emec_registradora"),
+      cnpj_registradora: valor("cnpj_registradora"),
+      endereco_registradora: valor("endereco_registradora")
     };
 
-    const { error: cadastroErro } = await db
-      .from("diplomas")
-      .insert(registro);
+    mensagem.textContent = "Salvando informações do diploma...";
 
-    if (cadastroErro) {
-      await db.storage.from("diplomas").remove([caminhoArquivo]);
-      caminhoArquivo = null;
-      throw cadastroErro;
+    const { error: insertError } = await db
+      .from("diplomas")
+      .insert([registro]);
+
+    if (insertError) {
+      throw new Error(
+        "O PDF foi enviado, mas o cadastro no banco falhou: " + insertError.message +
+        ". O arquivo enviado ficou em: " + caminho
+      );
     }
 
-    document.getElementById("codigoTexto").textContent = codigo;
-    document.getElementById("codigoGerado").classList.remove("hidden");
-    mensagem(msg, "Diploma cadastrado com sucesso!", "success");
-    document.getElementById("cadastroForm").reset();
+    ultimoCodigo = codigo;
+    document.getElementById("codeValue").textContent = codigo;
+    document.getElementById("createdCode").classList.remove("hidden");
 
-  } catch (erro) {
-    console.error(erro);
-    mensagem(msg, "Não foi possível cadastrar: " + (erro.message || "verifique as permissões do Supabase."), "error");
+    mensagem.className = "success";
+    mensagem.textContent = "Diploma cadastrado com sucesso!";
+
+    document.getElementById("diplomaForm").reset();
+
+    document.getElementById("createdCode").scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+  } catch (error) {
+    console.error(error);
+    mensagem.className = "error";
+    mensagem.textContent = "Erro: " + error.message;
   } finally {
     botao.disabled = false;
     botao.textContent = "Cadastrar diploma";
   }
 });
 
-document.getElementById("copiar").addEventListener("click", async () => {
-  const codigo = document.getElementById("codigoTexto").textContent;
-  try {
-    await navigator.clipboard.writeText(codigo);
-    mensagem(document.getElementById("cadastroMsg"), "Código copiado!", "success");
-  } catch {
-    mensagem(document.getElementById("cadastroMsg"), "Não foi possível copiar automaticamente. Selecione o código e copie.", "error");
-  }
-});
-
-db.auth.onAuthStateChange((_event, session) => {
-  mostrarPainel(!!session);
-});
-
 verificarSessao();
 </script>
+
 </body>
 </html>
