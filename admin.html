@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administração | Diplomas B3</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#f3f6fb;color:#183456}
+header{background:#103d75;color:white;padding:22px 6%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:23px;font-weight:800}
+.logo span{color:#68c1ff}
+header small{display:block;color:#d4e7fa;font-size:11px;margin-top:5px}
+main{max-width:850px;margin:40px auto;padding:0 16px}
+.card{background:white;padding:30px;border-radius:14px;box-shadow:0 8px 30px #16385d12;margin-bottom:22px}
+h2{color:#123e76;margin-bottom:10px;font-size:22px}
+.sub{font-size:13px;color:#718198;margin-bottom:22px;line-height:1.6}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
+input{width:100%;padding:13px;border:1px solid #d9e2ed;border-radius:8px;font-size:14px;background:#fcfdff}
+input:focus{outline:2px solid #b8dcff;border-color:#2584d0}
+button{border:0;border-radius:8px;padding:14px 18px;background:#1269b5;color:white;font-weight:700;font-size:14px;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+button:hover{background:#0b4f91}
+.secondary{background:#e8f1fb;color:#174b80}
+.secondary:hover{background:#d7e8fa}
+.full{width:100%;margin-top:20px}
+.hidden{display:none!important}
+.message{padding:14px;border-radius:8px;margin-top:16px;font-size:13px;line-height:1.6}
+.success{background:#e9f8ef;color:#176b38}
+.error{background:#fff0f0;color:#a42b2b}
+.codebox{background:#edf5ff;padding:16px;border-radius:9px;margin-top:15px;overflow-wrap:anywhere}
+.codebox strong{display:block;color:#174b80;margin-bottom:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.topline h2{margin:0}
+.hint{font-size:11px;color:#75869b;margin-top:7px}
+footer{text-align:center;color:#8190a4;font-size:12px;padding:25px}
+@media(max-width:600px){header{padding:18px 5%}.grid{grid-template-columns:1fr}.card{padding:22px 18px}.topline{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+
+<body>
+<header>
+  <div>
+    <div class="logo">Diplomas <span>B3</span></div>
+    <small>Painel administrativo</small>
+  </div>
+  <button id="sair" class="secondary hidden" type="button">Sair</button>
+</header>
+
+<main>
+  <section class="card" id="loginCard">
+    <h2>Acesso administrativo</h2>
+    <p class="sub">Entre com seu e-mail e senha de administrador.</p>
+
+    <form id="loginForm">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required placeholder="Seu e-mail">
+
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" required placeholder="Sua senha">
+
+      <button class="full" id="entrar" type="submit">Entrar no painel</button>
+    </form>
+    <div id="loginMsg" aria-live="polite"></div>
+  </section>
+
+  <section class="card hidden" id="painel">
+    <div class="topline">
+      <div>
+        <h2>Cadastrar diploma</h2>
+        <p class="sub" style="margin:7px 0 0">Preencha os dados conforme aparecem no documento.</p>
+      </div>
+    </div>
+
+    <form id="cadastroForm">
+      <label for="aluno">Nome completo do aluno *</label>
+      <input id="aluno" required placeholder="Nome completo">
+
+      <div class="grid">
+        <div>
+          <label for="numero">Número do diploma *</label>
+          <input id="numero" required placeholder="Número do diploma">
+        </div>
+        <div>
+          <label for="emissao">Data de emissão *</label>
+          <input id="emissao" type="date" required>
+        </div>
+      </div>
+
+      <label for="curso">Curso *</label>
+      <input id="curso" required placeholder="Nome do curso">
+
+      <label for="instituicao">Instituição emissora *</label>
+      <input id="instituicao" required placeholder="Nome da instituição">
+
+      <label for="conclusao">Data de conclusão</label>
+      <input id="conclusao" type="date">
+
+      <label for="pdf">Arquivo do diploma em PDF *</label>
+      <input id="pdf" type="file" accept="application/pdf,.pdf" required>
+      <p class="hint">O PDF será armazenado em bucket privado.</p>
+
+      <button class="full" id="cadastrar" type="submit">Cadastrar diploma</button>
+    </form>
+
+    <div id="cadastroMsg" aria-live="polite"></div>
+    <div id="codigoGerado" class="codebox hidden">
+      <strong>Diploma cadastrado! Código de validação:</strong>
+      <span id="codigoTexto"></span>
+      <button type="button" class="secondary full" id="copiar">Copiar código</button>
+    </div>
+  </section>
+</main>
+
+<footer>Diplomas B3 · Área restrita de administração</footer>
+
+<script>
+const SUPABASE_URL = "https://csbwjtfudvuzscodbrid.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Vz8dWvlsFTVTUWPjJkjsMg_iizsxDJI";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const loginCard = document.getElementById("loginCard");
+const painel = document.getElementById("painel");
+const sair = document.getElementById("sair");
+
+function mensagem(elemento, texto, tipo) {
+  elemento.innerHTML = "";
+  const div = document.createElement("div");
+  div.className = "message " + tipo;
+  div.textContent = texto;
+  elemento.appendChild(div);
+}
+
+function mostrarPainel(autenticado) {
+  loginCard.classList.toggle("hidden", autenticado);
+  painel.classList.toggle("hidden", !autenticado);
+  sair.classList.toggle("hidden", !autenticado);
+}
+
+async function verificarSessao() {
+  const { data, error } = await db.auth.getSession();
+  if (error) {
+    mensagem(document.getElementById("loginMsg"), error.message, "error");
+    return;
+  }
+  mostrarPainel(!!data.session);
+}
+
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const botao = document.getElementById("entrar");
+  const msg = document.getElementById("loginMsg");
+  botao.disabled = true;
+  botao.textContent = "Entrando...";
+
+  const { error } = await db.auth.signInWithPassword({
+    email: document.getElementById("email").value.trim(),
+    password: document.getElementById("senha").value
+  });
+
+  if (error) {
+    mensagem(msg, "Não foi possível entrar. Confira o e-mail e a senha.", "error");
+  } else {
+    msg.innerHTML = "";
+    mostrarPainel(true);
+  }
+
+  botao.disabled = false;
+  botao.textContent = "Entrar no painel";
+});
+
+sair.addEventListener("click", async () => {
+  await db.auth.signOut();
+  mostrarPainel(false);
+  document.getElementById("loginForm").reset();
+});
+
+function gerarCodigo() {
+  const aleatorio = crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase();
+  return "B3-" + aleatorio;
+}
+
+document.getElementById("cadastroForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const botao = document.getElementById("cadastrar");
+  const msg = document.getElementById("cadastroMsg");
+  const arquivo = document.getElementById("pdf").files[0];
+
+  msg.innerHTML = "";
+  document.getElementById("codigoGerado").classList.add("hidden");
+
+  if (!arquivo || arquivo.type !== "application/pdf" || !arquivo.name.toLowerCase().endsWith(".pdf")) {
+    mensagem(msg, "Selecione um arquivo PDF válido.", "error");
+    return;
+  }
+
+  if (arquivo.size > 15 * 1024 * 1024) {
+    mensagem(msg, "O PDF deve ter no máximo 15 MB.", "error");
+    return;
+  }
+
+  botao.disabled = true;
+  botao.textContent = "Cadastrando...";
+
+  let caminhoArquivo = null;
+
+  try {
+    const { data: sessaoData, error: sessaoErro } = await db.auth.getSession();
+    if (sessaoErro || !sessaoData.session) {
+      throw new Error("Sua sessão expirou. Entre novamente.");
+    }
+
+    const codigo = gerarCodigo();
+    caminhoArquivo = codigo + "/" + crypto.randomUUID() + ".pdf";
+
+    const { error: uploadErro } = await db.storage
+      .from("diplomas")
+      .upload(caminhoArquivo, arquivo, {
+        contentType: "application/pdf",
+        upsert: false
+      });
+
+    if (uploadErro) throw uploadErro;
+
+    const registro = {
+      codigo: codigo,
+      nome_aluno: document.getElementById("aluno").value.trim(),
+      numero: document.getElementById("numero").value.trim(),
+      data_emissao: document.getElementById("emissao").value,
+      curso: document.getElementById("curso").value.trim(),
+      instituicao: document.getElementById("instituicao").value.trim(),
+      data_conclusao: document.getElementById("conclusao").value || null,
+      arquivo_url: caminhoArquivo,
+      status: "valido"
+    };
+
+    const { error: cadastroErro } = await db
+      .from("diplomas")
+      .insert(registro);
+
+    if (cadastroErro) {
+      await db.storage.from("diplomas").remove([caminhoArquivo]);
+      caminhoArquivo = null;
+      throw cadastroErro;
+    }
+
+    document.getElementById("codigoTexto").textContent = codigo;
+    document.getElementById("codigoGerado").classList.remove("hidden");
+    mensagem(msg, "Diploma cadastrado com sucesso!", "success");
+    document.getElementById("cadastroForm").reset();
+
+  } catch (erro) {
+    console.error(erro);
+    mensagem(msg, "Não foi possível cadastrar: " + (erro.message || "verifique as permissões do Supabase."), "error");
+  } finally {
+    botao.disabled = false;
+    botao.textContent = "Cadastrar diploma";
+  }
+});
+
+document.getElementById("copiar").addEventListener("click", async () => {
+  const codigo = document.getElementById("codigoTexto").textContent;
+  try {
+    await navigator.clipboard.writeText(codigo);
+    mensagem(document.getElementById("cadastroMsg"), "Código copiado!", "success");
+  } catch {
+    mensagem(document.getElementById("cadastroMsg"), "Não foi possível copiar automaticamente. Selecione o código e copie.", "error");
+  }
+});
+
+db.auth.onAuthStateChange((_event, session) => {
+  mostrarPainel(!!session);
+});
+
+verificarSessao();
+</script>
+</body>
+</html>
