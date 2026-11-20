@@ -1,0 +1,9 @@
+
+{
+  "rewrites": [
+    {
+      "source": "/validar/:codigo",
+      "destination": "/index.html"
+    }
+  ]
+}
