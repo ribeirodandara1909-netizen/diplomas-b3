@@ -538,24 +538,60 @@ async function baixarPDF() {
   }
 
   const botao = document.getElementById("btnPdf");
+  let janela = null;
+
   botao.disabled = true;
+
+  // Abre a janela durante o clique para evitar bloqueio de pop-up.
+  janela = window.open("about:blank", "_blank");
 
   try {
     const {data, error} = await db.functions.invoke("gerar-link-pdf", {
       body: {codigo:diplomaAtual.codigo}
     });
 
-    if (error) throw error;
+    if (error) {
+      let detalhe = error.message || "Erro ao chamar a função.";
 
-    if (!data || !data.signedUrl) {
-      throw new Error("A função não retornou o link seguro do PDF.");
+      // Tenta ler a resposta detalhada enviada pelo Supabase.
+      if (error.context && typeof error.context.clone === "function") {
+        try {
+          const resposta = await error.context.clone().text();
+          if (resposta) detalhe += "\n\nDetalhes: " + resposta;
+        } catch (leituraErro) {
+          console.warn("Não foi possível ler a resposta detalhada:", leituraErro);
+        }
+      }
+
+      throw new Error(detalhe);
     }
 
-    window.open(data.signedUrl, "_blank");
+    if (!data || !data.signedUrl) {
+      throw new Error(
+        "A função respondeu, mas não retornou o link seguro do PDF. Resposta: " +
+        JSON.stringify(data)
+      );
+    }
+
+    if (janela) {
+      janela.location.href = data.signedUrl;
+    } else {
+      window.location.href = data.signedUrl;
+    }
 
   } catch (erro) {
-    console.error("Erro ao baixar PDF:", erro);
-    alert("O download do PDF ainda precisa ser configurado no Supabase. O arquivo continua protegido.");
+    console.error("Erro detalhado ao baixar PDF:", erro);
+
+    if (janela && !janela.closed) {
+      janela.close();
+    }
+
+    alert(
+      "Não foi possível baixar o PDF.\n\n" +
+      "Erro identificado:\n" +
+      (erro.message || String(erro))
+    );
+
   } finally {
     botao.disabled = false;
   }
